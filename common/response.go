@@ -1,6 +1,9 @@
 package common
 
-import "errors"
+import (
+	"errors"
+	"net/http"
+)
 
 type successRes struct {
 	Data   interface{} `json:"data"`
@@ -16,23 +19,25 @@ func NewSuccessResponse(data, paging, filter interface{}) *successRes {
 	return &successRes{Data: data, Paging: paging, Filter: filter}
 }
 
-type ErrorRes struct {
-	RootErr error  `json:"root_err"`
-	Message string `json:"message"`
-	Log     string `json:"log"`
-	Key     string `json:"error_key"`
+type AppError struct {
+	StatusCode int    `json:"status_code"`
+	RootErr    error  `json:"-"`
+	Message    string `json:"message"`
+	Log        string `json:"log"`
+	Key        string `json:"error_key"`
 }
 
-func NewErrorResponse(root error, msg, log, key string) *ErrorRes {
-	return &ErrorRes{
-		RootErr: root,
-		Message: msg,
-		Log:     log,
-		Key:     key,
+func NewErrorResponse(root error, msg, log, key string) *AppError {
+	return &AppError{
+		StatusCode: http.StatusBadRequest,
+		RootErr:    root,
+		Message:    msg,
+		Log:        log,
+		Key:        key,
 	}
 }
 
-func NewCustomError(root error, msg string, key string) *ErrorRes {
+func NewCustomError(root error, msg string, key string) *AppError {
 	if root != nil {
 		return NewErrorResponse(root, msg, root.Error(), key)
 	}
@@ -40,14 +45,14 @@ func NewCustomError(root error, msg string, key string) *ErrorRes {
 	return NewErrorResponse(errors.New(msg), msg, msg, key)
 }
 
-func (e *ErrorRes) RootError() error {
-	if err, ok := e.RootErr.(*ErrorRes); ok {
+func (e *AppError) RootError() error {
+	if err, ok := e.RootErr.(*AppError); ok {
 		return err.RootError()
 	}
 
 	return e.RootErr
 }
 
-func (e *ErrorRes) Error() string {
+func (e *AppError) Error() string {
 	return e.RootError().Error()
 }

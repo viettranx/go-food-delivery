@@ -2,36 +2,36 @@ package notehdl
 
 import (
 	"fooddlv/common"
-	"fooddlv/note/notemodel"
 	"fooddlv/note/noterepo"
 	"fooddlv/note/notestorage"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
-func ListNote(appCtx common.AppContext) func(*gin.Context) {
-	return func(c *gin.Context) {
-		var p notemodel.ListParam
+// DELETE v1/notes/:note-id
 
-		if err := c.ShouldBind(&p); err != nil && err.Error() != "EOF" {
+func DeleteNote(appCtx common.AppContext) func(*gin.Context) {
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("note-id"))
+
+		if err != nil {
 			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
 			return
 		}
 
-		p.Fulfill()
-
 		db := appCtx.GetDBConnection()
 
 		store := notestorage.NewMysqlStore(db)
-		repo := noterepo.NewListNoteRepo(store)
+		repo := noterepo.NewDeleteNoteRepo(store)
 
-		result, err := repo.ListNote(c.Request.Context(), &p.Paging, p.ListFilter)
+		_, err = repo.DeleteNote(c.Request.Context(), id)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
 
-		c.JSON(http.StatusOK, common.NewSuccessResponse(result, p.Paging, p.ListFilter))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }

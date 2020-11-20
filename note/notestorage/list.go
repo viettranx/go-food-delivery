@@ -6,7 +6,11 @@ import (
 	"fooddlv/note/notemodel"
 )
 
-func (s *storeMysql) List(ctx context.Context, paging *common.Paging) ([]notemodel.Note, error) {
+func (s *storeMysql) List(
+	ctx context.Context,
+	paging *common.Paging,
+	filter *notemodel.ListFilter,
+) ([]notemodel.Note, error) {
 	var rs []notemodel.Note
 
 	db := s.db.Table(notemodel.Note{}.TableName()).Where("status = 1")

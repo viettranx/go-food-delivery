@@ -34,6 +34,7 @@ func main() {
 
 	notes := v1.Group("/notes")
 	notes.GET("", notehdl.ListNote(appCtx))
+	notes.DELETE("/:note-id", notehdl.DeleteNote(appCtx))
 
 	notes.GET("/:note-id", func(c *gin.Context) {
 		noteId := c.Param("note-id")

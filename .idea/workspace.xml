@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="be131f6c-048e-4a42-90a2-321aac83ee74" name="Default Changelist" comment="Add repo layer and some refactoring">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="be131f6c-048e-4a42-90a2-321aac83ee74" name="Default Changelist" comment="update gitignore">
+      <change afterPath="$PROJECT_DIR$/middleware/recovery.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/note/notehdl/delete_note.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/note/noterepo/delete_note.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/note/notestorage/delete.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/note/notestorage/find.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appctx/app_context.go" beforeDir="false" afterPath="$PROJECT_DIR$/appctx/app_context.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/error.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/error.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/paging.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/paging.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/response.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/response.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/note/notehdl/list_note.go" beforeDir="false" afterPath="$PROJECT_DIR$/note/notehdl/list_note.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/note/notemodel/list_filter.go" beforeDir="false" afterPath="$PROJECT_DIR$/note/notemodel/list_filter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/note/notemodel/note.go" beforeDir="false" afterPath="$PROJECT_DIR$/note/notemodel/note.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/note/noterepo/list_note.go" beforeDir="false" afterPath="$PROJECT_DIR$/note/noterepo/list_note.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/note/notestorage/list.go" beforeDir="false" afterPath="$PROJECT_DIR$/note/notestorage/list.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,11 +48,18 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/note/notehdl" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="watcher.settings" />
     <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/note/notehdl" />
+      <recent name="$PROJECT_DIR$/note/notestorage" />
+      <recent name="$PROJECT_DIR$/note/noterepo" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="go build fooddlv" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -63,6 +84,10 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="update gitignore" />
+  </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
   </component>
@@ -75,10 +100,10 @@
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="545" y="330" key="#com.intellij.fileTypes.FileTypeChooser/1680.23.1116.733/0.23.1680.1027@0.23.1680.1027" timestamp="1605541161293" />
-    <state x="330" y="36" key="CommitChangelistDialog2" timestamp="1605840333832">
+    <state x="330" y="36" key="CommitChangelistDialog2" timestamp="1605885937485">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state x="330" y="36" key="CommitChangelistDialog2/0.23.1680.1027@0.23.1680.1027" timestamp="1605840333832" />
+    <state x="330" y="36" key="CommitChangelistDialog2/0.23.1680.1027@0.23.1680.1027" timestamp="1605885937485" />
     <state x="440" y="275" key="EditFileWatcherDialog" timestamp="1605280043748">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
@@ -87,29 +112,33 @@
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="679" y="226" width="824" height="620" key="EnvironmentVariablesDialog/1680.23.1116.733/0.23.1680.1027@0.23.1680.1027" timestamp="1605539248338" />
-    <state width="1628" height="267" key="GridCell.Tab.0.bottom" timestamp="1605541067152">
+    <state width="1448" height="267" key="GridCell.Tab.0.bottom" timestamp="1605885663548">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="1628" height="267" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1605493933893" />
+    <state width="1448" height="267" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1605885663548" />
     <state width="1628" height="267" key="GridCell.Tab.0.bottom/1680.23.1116.733/0.23.1680.1027@0.23.1680.1027" timestamp="1605541067152" />
-    <state width="1628" height="267" key="GridCell.Tab.0.center" timestamp="1605541067150">
+    <state width="1448" height="267" key="GridCell.Tab.0.center" timestamp="1605885663547">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="1628" height="267" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1605493933893" />
+    <state width="1448" height="267" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1605885663547" />
     <state width="1628" height="267" key="GridCell.Tab.0.center/1680.23.1116.733/0.23.1680.1027@0.23.1680.1027" timestamp="1605541067150" />
-    <state width="1628" height="267" key="GridCell.Tab.0.left" timestamp="1605541067149">
+    <state width="1448" height="267" key="GridCell.Tab.0.left" timestamp="1605885663547">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="1628" height="267" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1605493933892" />
+    <state width="1448" height="267" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1605885663547" />
     <state width="1628" height="267" key="GridCell.Tab.0.left/1680.23.1116.733/0.23.1680.1027@0.23.1680.1027" timestamp="1605541067149" />
-    <state width="1628" height="267" key="GridCell.Tab.0.right" timestamp="1605541067151">
+    <state width="1448" height="267" key="GridCell.Tab.0.right" timestamp="1605885663548">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state width="1628" height="267" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1605493933893" />
+    <state width="1448" height="267" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1605885663548" />
     <state width="1628" height="267" key="GridCell.Tab.0.right/1680.23.1116.733/0.23.1680.1027@0.23.1680.1027" timestamp="1605541067151" />
     <state x="232" y="88" key="SettingsEditor" timestamp="1605280045406">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="232" y="88" key="SettingsEditor/1680.23.1116.733/0.23.1680.1027@0.23.1680.1027" timestamp="1605280045406" />
+    <state x="340" y="213" key="Vcs.Push.Dialog.v2" timestamp="1605840381729">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="340" y="213" key="Vcs.Push.Dialog.v2/0.23.1680.1027@0.23.1680.1027" timestamp="1605840381729" />
   </component>
 </project>
