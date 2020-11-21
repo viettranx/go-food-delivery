@@ -11,5 +11,5 @@ func NewAppContext(db *gorm.DB) *appContext {
 }
 
 func (ctx *appContext) GetDBConnection() *gorm.DB {
-	return ctx.db
+	return ctx.db.Session(&gorm.Session{})
 }

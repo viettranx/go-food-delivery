@@ -1,3 +1,28 @@
+### Go template
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.pem
 app
+
+consumer/archived
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Env file
+.env
+
+# IDEs
+.DS_STORE
 .idea
-.DS_Store
+.vscode
+main
+tmp
+vendor

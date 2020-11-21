@@ -1,12 +1,28 @@
 package notestorage
 
-import "fooddlv/note/notemodel"
+import (
+	"context"
+	"fooddlv/common"
+	"fooddlv/note/notemodel"
+)
 
-func (s *storeMysql) List() ([]notemodel.Note, error) {
+func (s *storeMysql) List(
+	ctx context.Context,
+	paging *common.Paging,
+	filter *notemodel.ListFilter,
+) ([]notemodel.Note, error) {
 	var rs []notemodel.Note
 
-	if err := s.db.Limit(10).Find(&rs).Error; err != nil {
-		return nil, err
+	db := s.db.Table(notemodel.Note{}.TableName()).Where("status = 1")
+
+	if err := db.Count(&paging.Total).Error; err != nil {
+		return nil, common.ErrDB(err)
+	}
+
+	if err := s.db.
+		Limit(paging.Limit).Offset((paging.Page - 1) * paging.Limit).
+		Find(&rs).Error; err != nil {
+		return nil, common.ErrDB(err)
 	}
 
 	return rs, nil
