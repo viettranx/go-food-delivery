@@ -2,6 +2,7 @@ package main
 
 import (
 	"fooddlv/appctx"
+	"fooddlv/auth/authhdl"
 	"fooddlv/note/notehdl"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -41,5 +42,8 @@ func main() {
 		c.String(http.StatusOK, "Hello %s", noteId)
 	})
 
+	auth := v1.Group("/auth")
+	auth.POST("/register", authhdl.Register(appCtx))
+	auth.POST("/login", authhdl.Login(appCtx))
 	r.Run()
 }
