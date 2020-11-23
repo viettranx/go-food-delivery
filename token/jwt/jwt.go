@@ -50,10 +50,10 @@ func (j *JWT) Generate(user usermodel.User, opts ...token.GenerateOption) (*toke
 	}, nil
 }
 
-func (J *JWT) Inspect(token string) (*token.JwtPayload, error) {
+func (j *JWT) Inspect(token string) (*token.JwtPayload, error) {
 	panic("implement me")
 }
 
-func (J *JWT) String() string {
+func (j *JWT) String() string {
 	panic("implement me")
 }

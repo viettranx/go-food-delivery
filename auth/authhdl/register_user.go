@@ -29,6 +29,7 @@ func Register(appCtx common.AppContext) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(userId > 0))
+
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(userId))
 	}
 }

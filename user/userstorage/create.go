@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"fooddlv/common"
 	"fooddlv/user/usermodel"
+	"log"
 )
 
 func (store *userMySql) Create(ctx context.Context, createUserData *usermodel.CreateUser) (int, error) {
 	db := store.db.Begin()
 
-	fmt.Println("create user data", createUserData)
+	log.Println("create user data", createUserData)
 
 	if err := db.Table(usermodel.CreateUser{}.TableName()).Create(&createUserData).Error; err != nil {
 		db.Rollback()

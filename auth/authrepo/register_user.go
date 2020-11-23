@@ -26,7 +26,7 @@ func (repo *registerRepo) Register(ctx context.Context, createUserData *authmode
 	user, err := repo.store.FindUserByCondition(ctx, map[string]interface{}{"email": createUserData.Email})
 
 	if user != nil {
-		return 0, common.ErrUserAlreadyExists(authmodel.EntityName, err)
+		return 0, common.ErrEntityExisted(authmodel.EntityName, err)
 	}
 
 	md5Hash := hash.NewMd5Hash(createUserData.Password, randx.GenSalt(50))
@@ -34,7 +34,7 @@ func (repo *registerRepo) Register(ctx context.Context, createUserData *authmode
 	userId, err = repo.store.Create(ctx, createUserData.ToCreateUser(md5Hash))
 
 	if err != nil {
-		return 0, common.ErrCannotCreate(authmodel.EntityName, err)
+		return 0, common.ErrCannotCreateEntity(authmodel.EntityName, err)
 	}
 
 	return userId, nil
