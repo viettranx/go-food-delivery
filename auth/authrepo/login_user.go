@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ErrUsernameOrPasswordInvalid = common.NewCustomError(errors.New("Username or Password invalid"), "", "")
+	ErrUsernameOrPasswordInvalid = common.NewCustomError(errors.New("username or password invalid"), "", "")
 )
 
 type LoginUserStorage interface {
@@ -35,7 +35,7 @@ func (repo *loginUserRepo) LoginUser(ctx context.Context, loginUserData *authmod
 	user, err := repo.store.FindUserByCondition(ctx, map[string]interface{}{"email": loginUserData.Email})
 
 	if err != nil {
-		return nil, common.ErrUserAlreadyExists(authmodel.EntityName, err)
+		return nil, common.ErrEntityExisted(authmodel.EntityName, err)
 	}
 
 	md5Hash := hash.NewMd5Hash(loginUserData.Password, user.Salt)
@@ -44,12 +44,12 @@ func (repo *loginUserRepo) LoginUser(ctx context.Context, loginUserData *authmod
 		return nil, ErrUsernameOrPasswordInvalid
 	}
 
-	accessToken, err := repo.tokenProvider.Generate(*user, token.WithExpiry(15*time.Minute))
+	accessToken, err := repo.tokenProvider.Generate(*user, token.WithExpiry(24*30*time.Hour))
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}
 
-	refreshToken, err := repo.tokenProvider.Generate(*user, token.WithExpiry(48*time.Hour))
+	refreshToken, err := repo.tokenProvider.Generate(*user, token.WithExpiry(24*60*time.Hour))
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}

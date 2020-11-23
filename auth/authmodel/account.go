@@ -13,7 +13,7 @@ type Account struct {
 
 func NewAccount(user *usermodel.User, atok, rtok *token.Token) *Account {
 	return &Account{
-		User:         user,
+		User:         user, // remove
 		AccessToken:  atok,
 		RefreshToken: rtok,
 	}
