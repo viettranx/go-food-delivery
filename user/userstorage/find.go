@@ -12,9 +12,9 @@ func (store *userMySql) FindUserByCondition(
 	relations ...string) (*usermodel.User, error) {
 
 	var user usermodel.User
-	db := store.db.Table(usermodel.User{}.TableName())
+	db := store.db.Table(usermodel.User{}.TableName()).Where("status = 1")
 
-	if err := db.First(&user).Where(conditions).Where("status = 1").Error; err != nil {
+	if err := db.Where(conditions).First(&user).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 
