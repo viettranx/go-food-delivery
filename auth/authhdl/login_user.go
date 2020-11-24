@@ -9,10 +9,9 @@ import (
 	"fooddlv/user/userstorage"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"os"
 )
 
-func Login(appCtx common.AppContext) gin.HandlerFunc {
+func Login(appCtx common.AppContext, secretKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		var loginUserData authmodel.LoginUser
@@ -23,7 +22,7 @@ func Login(appCtx common.AppContext) gin.HandlerFunc {
 		}
 
 		db := appCtx.GetDBConnection()
-		tokenProvider := jwt.NewTokenProvider(token.WithSecretKey([]byte(os.Getenv("SECRET_KEY"))))
+		tokenProvider := jwt.NewTokenProvider(token.WithSecretKey([]byte(secretKey)))
 
 		store := userstorage.NewUserMysql(db)
 		repo := authrepo.NewLoginUserRepo(store, tokenProvider)
@@ -35,7 +34,6 @@ func Login(appCtx common.AppContext) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"data":         account.User,
 			"access_token": account.AccessToken,
 		})
 	}

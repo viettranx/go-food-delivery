@@ -8,13 +8,23 @@ import (
 )
 
 var (
-	ErrNotFound      = common.NewCustomError(errors.New("token not found"), "", "")
-	ErrEncodingToken = common.NewCustomError(errors.New("error encoding the token"), "", "")
-	ErrInvalidToken  = common.NewCustomError(errors.New("invalid token provided"), "", "")
+	ErrNotFound = common.NewCustomError(
+		errors.New("token not found"),
+		"token not found",
+		"ErrNotFound",
+	)
+	ErrEncodingToken = common.NewCustomError(errors.New("error encoding the token"),
+		"error encoding the token",
+		"ErrEncodingToken",
+	)
+	ErrInvalidToken = common.NewCustomError(errors.New("invalid token provided"),
+		"invalid token provided",
+		"ErrInvalidToken",
+	)
 )
 
 type JwtPayload struct {
-	UserId int `json:"user_id"`
+	UserId int    `json:"user_id"`
 	Role   string `json:"role"`
 }
 

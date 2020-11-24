@@ -1,6 +1,7 @@
 package authmodel
 
 import (
+	"errors"
 	"fooddlv/common"
 	"fooddlv/user/usermodel"
 )
@@ -16,6 +17,16 @@ type CreateUser struct {
 	Phone           *string         `json:"phone" gorm:"column:phone;"`
 	Roles           common.RoleEnum `json:"role" gorm:"column:roles;type:ENUM('user', 'admin')"`
 	Avatar          *common.JSON    `json:"avatar" gorm:"column:avatar;type:json"`
+}
+
+func (cu *CreateUser) Validate() error {
+	if len(cu.Email) == 0 {
+		return errors.New("email can't not empty")
+	}
+	if len(cu.Password) == 0 {
+		return errors.New("password can't not empty")
+	}
+	return nil
 }
 
 func (CreateUser) TableName() string {
