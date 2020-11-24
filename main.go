@@ -19,7 +19,7 @@ import (
 
 func main() {
 	dbConStr := os.Getenv("DBConnStr")
-
+	secretKey := os.Getenv("SECRET_KEY")
 	db, err := gorm.Open(mysql.Open(dbConStr), &gorm.Config{})
 
 	if err != nil {
@@ -51,7 +51,7 @@ func main() {
 
 	auth := v1.Group("/auth")
 	auth.POST("/register", authhdl.Register(appCtx))
-	auth.POST("/login", authhdl.Login(appCtx))
+	auth.POST("/login", authhdl.Login(appCtx, secretKey))
 
 	//v1.GET("my-profile", ParseToken, GetProfile)
 	//users := v1.Group("users", ParseToken)
