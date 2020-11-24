@@ -12,7 +12,11 @@ import (
 )
 
 var (
-	ErrUsernameOrPasswordInvalid = common.NewCustomError(errors.New("username or password invalid"), "", "")
+	ErrUsernameOrPasswordInvalid = common.NewCustomError(
+		errors.New("username or password invalid"),
+		"username or password invalid",
+		"ErrUsernameOrPasswordInvalid",
+	)
 )
 
 type LoginUserStorage interface {
