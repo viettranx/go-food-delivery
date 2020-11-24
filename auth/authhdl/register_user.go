@@ -20,6 +20,11 @@ func Register(appCtx common.AppContext) gin.HandlerFunc {
 			return
 		}
 
+		if err := user.Validate(); err != nil {
+			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
+			return
+		}
+
 		store := userstorage.NewUserMysql(db)
 		repo := authrepo.NewAuthRepo(store)
 
