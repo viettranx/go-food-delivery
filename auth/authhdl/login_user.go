@@ -34,7 +34,6 @@ func Login(appCtx common.AppContext, secretKey string) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"data":         account.User,
 			"access_token": account.AccessToken,
 		})
 	}

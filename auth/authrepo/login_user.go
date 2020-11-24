@@ -54,7 +54,7 @@ func (repo *loginUserRepo) LoginUser(ctx context.Context, loginUserData *authmod
 		return nil, common.ErrInternal(err)
 	}
 
-	account := authmodel.NewAccount(user, accessToken, refreshToken)
+	account := authmodel.NewAccount(accessToken, refreshToken)
 
 	return account, nil
 }
