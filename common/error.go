@@ -40,3 +40,19 @@ func ErrCannotGetEntity(entity string, err error) *AppError {
 		fmt.Sprintf("ErrCannotGet%s", entity),
 	)
 }
+
+func ErrEntityExisted(entity string, err error) *AppError {
+	return NewCustomError(
+		err,
+		fmt.Sprintf("User already exists %s", strings.ToLower(entity)),
+		fmt.Sprintf("ErrUserAlreadyExists%s", entity),
+	)
+}
+
+func ErrCannotCreateEntity(entity string, err error) *AppError {
+	return NewCustomError(
+		err,
+		fmt.Sprintf("Cannot Create %s", strings.ToLower(entity)),
+		fmt.Sprintf("ErrCannotCreate%s", entity),
+	)
+}

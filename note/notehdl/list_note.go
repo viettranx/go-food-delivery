@@ -14,8 +14,7 @@ func ListNote(appCtx common.AppContext) func(*gin.Context) {
 		var p notemodel.ListParam
 
 		if err := c.ShouldBind(&p); err != nil && err.Error() != "EOF" {
-			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
-			return
+			panic(err)
 		}
 
 		p.Fulfill()
