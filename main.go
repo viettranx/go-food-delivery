@@ -96,3 +96,7 @@ type Requester interface {
 // 1.1 Get user by user id
 // 2. Handler get user, repo
 // 3. Return user info
+
+// API has image upload:
+// Set avatar user, Create Food, Create Restaurant,
+// API Upload Image
