@@ -11,9 +11,13 @@ func (s *storeMysql) Find(
 	cond map[string]interface{},
 	moreInfos ...string,
 ) (*notemodel.Note, error) {
-	var rs notemodel.Note
-
 	db := s.db.Table(notemodel.Note{}.TableName()).Where(cond)
+
+	for i := range moreInfos {
+		db = db.Preload(moreInfos[i])
+	}
+
+	var rs notemodel.Note
 
 	if err := db.First(&rs).Error; err != nil {
 		return nil, common.ErrDB(err)
