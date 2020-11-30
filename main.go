@@ -3,6 +3,7 @@ package main
 import (
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
+	"fooddlv/food/foodhdl"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
 	"github.com/gin-gonic/gin"
@@ -56,6 +57,11 @@ func main() {
 	//v1.GET("my-profile", ParseToken, GetProfile)
 	//users := v1.Group("users", ParseToken)
 	//users.GET("/:user-id")
+
+	foods := v1.Group("/foods")
+	foods.GET("", foodhdl.ListFood(appCtx))
+	foods.GET("/:food-id", foodhdl.FindFood(appCtx))
+	foods.DELETE("/:food-id", foodhdl.DeleteFood(appCtx))
 
 	r.Run()
 }
