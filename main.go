@@ -5,6 +5,7 @@ import (
 	"fooddlv/auth/authhdl"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
+	"fooddlv/order_details/detailshdl"
 	"fooddlv/upload/imghdl"
 	"fooddlv/orders/orderhdl"
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,6 @@ func main() {
 
 	notes := v1.Group("/notes")
 	notes.GET("", notehdl.ListNote(appCtx))
-	notes.POST("", notehdl.CreateNote(appCtx))
 	notes.DELETE("/:note-id", notehdl.DeleteNote(appCtx))
 
 	notes.GET("/:note-id", func(c *gin.Context) {
@@ -62,10 +62,6 @@ func main() {
 
 	orders := users.Group("/:user-id/orders")
 	orders.GET("", orderhdl.ListOrder(appCtx))
-	v1.Static("/file", "./public")
-	upload := v1.Group("/upload")
-	upload.POST("", imghdl.UploadImg(appCtx))
-
 	r.Run()
 }
 
@@ -105,27 +101,3 @@ type Requester interface {
 // 1.1 Get user by user id
 // 2. Handler get user, repo
 // 3. Return user info
-
-// API has image upload:
-// Set avatar user, Create Food, Create Restaurant,
-// API Upload Image
-
-// API List/Get Food:
-// We need a full object food, within restaurant object (simple form):
-// Ex: {"id": 1, "title": "abc", "restaurant": {...}}
-// Done.
-
-// Create Food (security enhancement) flow:
-// 1. User upload images to upload API
-// 1.1 Backend store image, insert to images db
-// 1.2 Backend return array of image ids to the client
-// 2. User create food with food json include image ids: {"title": "...", "img_ids": [1,2,3]}
-// 2.1 Backend fetch image objects by ids
-// 2.2 Insert new food with request body data and image objects from 2.1
-// 3. Return inserted id to client.
-// Side effect: Delete image record with ids (async)
-// Done.
-
-// Some APIs have side effect (async method/job). We have to design a job can configurable (timeout, retry count
-// and time), support concurrent and maintainable.
-// TODO: how to implement
