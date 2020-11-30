@@ -3,6 +3,7 @@ package main
 import (
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
+	"fooddlv/cart/carthdl"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
 	"fooddlv/order_details/detailshdl"
@@ -51,7 +52,6 @@ func main() {
 		noteId := c.Param("note-id")
 		c.String(http.StatusOK, "Hello %s", noteId)
 	})
-
 	auth := v1.Group("/auth")
 	auth.POST("/register", authhdl.Register(appCtx))
 	auth.POST("/login", authhdl.Login(appCtx, secretKey))
@@ -60,7 +60,20 @@ func main() {
 	users := v1.Group("users")
 	users.GET("/:user-id")
 
-	orders := users.Group("/:user-id/orders")
+	// -- CART -- //
+	cart := v1.Group("/cart")
+	// getting cart detail
+	cart.GET("", carthdl.ShowCart(appCtx))
+	// add a item to the cart
+	cart.POST("/add", carthdl.AddToCart(appCtx))
+	// Update cart (by remove items adjust quantity, ..
+	cart.PUT("/add", carthdl.UpdateCart(appCtx))
+	// checkout -> create an order.
+	cart.POST("/checkout", nil)
+
+	// -- ORDERS and ORDER-DETAILS -- //
+
+	orders := v1.Group("/orders")
 	orders.GET("", orderhdl.ListOrder(appCtx))
 	r.Run()
 }
