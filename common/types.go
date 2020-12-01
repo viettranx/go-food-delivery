@@ -52,6 +52,10 @@ type Image struct {
 	Height int    `json:"height"`
 }
 
+func (Image) TableName() string {
+	return "images"
+}
+
 func (j *Image) Scan(value interface{}) error {
 	bytes, ok := value.([]byte)
 	if !ok {
