@@ -60,6 +60,18 @@ func main() {
 	users := v1.Group("users")
 	users.GET("/:user-id")
 
+	
+	// -- CART -- //
+	cart := v1.Group("/cart")
+	// getting cart detail
+	cart.GET("", carthdl.ShowCart(appCtx))
+	// add a item to the cart
+	cart.POST("/add", carthdl.AddToCart(appCtx))
+	// Update cart (by remove items adjust quantity, ..
+	cart.PUT("/add", carthdl.UpdateCart(appCtx))
+	// checkout -> create an order.
+	cart.POST("/checkout", nil)
+
 	orders := users.Group("/:user-id/orders")
 	orders.GET("", orderhdl.ListOrder(appCtx))
 	v1.Static("/file", "./public")
