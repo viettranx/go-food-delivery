@@ -1,18 +1,19 @@
-package orderstorage
+package detailstorage
 
 import (
 	"context"
 	"fooddlv/common"
-	"fooddlv/orders/ordermodel"
+	"fooddlv/order_details/detailsmodel"
 )
 
-func (s *orderStorage) List(
+func (s *orderDetailStorage) ListOrderDetail(
 	ctx context.Context,
 	paging *common.Paging,
-	filter *ordermodel.ListFilter,
-) ([]ordermodel.Order, error) {
-	var rs []ordermodel.Order
-	db := s.db.Table(ordermodel.Order{}.TableName()).Where("status = 1")
+	filter *detailsmodel.ListFilter,
+) ([]detailsmodel.Order, error) {
+	var rs []detailsmodel.Order
+
+	db := s.db.Table(detailsmodel.Order{}.TableName()).Where("status = 1")
 
 	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrDB(err)

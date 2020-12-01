@@ -5,6 +5,7 @@ import (
 	"fooddlv/auth/authhdl"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
+	"fooddlv/order_details/detailshdl"
 	"fooddlv/orders/orderhdl"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -50,7 +51,6 @@ func main() {
 		noteId := c.Param("note-id")
 		c.String(http.StatusOK, "Hello %s", noteId)
 	})
-
 	auth := v1.Group("/auth")
 	auth.POST("/register", authhdl.Register(appCtx))
 	auth.POST("/login", authhdl.Login(appCtx, secretKey))
@@ -59,8 +59,13 @@ func main() {
 	users := v1.Group("users")
 	users.GET("/:user-id")
 
-	orders := users.Group("/:user-id/orders")
+
+	// -- ORDERS and ORDER-DETAILS -- //
+
+	orders := v1.Group("/orders")
 	orders.GET("", orderhdl.ListOrder(appCtx))
+	orders.GET("/:order-id", detailshdl.ListOrderDetail(appCtx))
+
 	r.Run()
 }
 
