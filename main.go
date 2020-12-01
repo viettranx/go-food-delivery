@@ -5,6 +5,7 @@ import (
 	"fooddlv/auth/authhdl"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
+	"fooddlv/upload/imghdl"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -57,6 +58,10 @@ func main() {
 	//v1.GET("my-profile", ParseToken, GetProfile)
 	//users := v1.Group("users", ParseToken)
 	//users.GET("/:user-id")
+
+	v1.Static("/file", "./public")
+	upload := v1.Group("/upload")
+	upload.POST("", imghdl.UploadImg(appCtx))
 
 	r.Run()
 }
