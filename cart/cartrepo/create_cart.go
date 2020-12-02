@@ -6,13 +6,6 @@ import (
 	"fooddlv/common"
 )
 
-type CartStorage interface {
-	Create(ctx context.Context, createCartData *cartmodel.CartCreation) (int, error)
-}
-
-type createCartRepo struct {
-	store CartStorage
-}
 type Food struct {
 	id          int
 	name        string
@@ -21,28 +14,35 @@ type Food struct {
 	images      string
 	status      int
 }
+type GetFoodStorage interface {
+	GetFoods(ctx context.Context, cond map[string]interface{}, id []int) ([]Food, error)
+}
+
+type CartStorage interface {
+	Create(ctx context.Context, createCartData *cartmodel.CreateCart) (int, error)
+}
+
+type createCartRepo struct {
+	foodStore GetFoodStorage
+	store     CartStorage
+}
 
 func NewCreateCartRepo(store CartStorage) *createCartRepo {
 	return &createCartRepo{store: store}
 }
 
-func (repo *createCartRepo) AddToCart(ctx context.Context, createCartData *cartmodel.CartCreation) (result int, err error) {
-	//var item interface{}
-	// find item in foods if exits
-	// item, err := repo.store.FindFoodsByCondition(ctx, map[string]interface{}{"id": createCartData.FoodId})
-	// so Dummy the Food response
-	item := Food{
-		id:          1,
-		name:        "Dummy",
-		description: "Dummy des",
-		price:       100,
-		images:      "http://...png",
+func (repo *createCartRepo) AddToCart(ctx context.Context, createCartData *cartmodel.CreateCart) (result int, err error) {
+	// Get foods info
+	foodsId := make([]int, len(createCartData.CartItems))
+	for i := range foodsId {
+		foodsId[i] = createCartData.CartItems[i].FoodId
 	}
 
-	// If food item not exit, or out of stock, should return error to user
-	if item == nil {
+	if _, err := repo.foodStore.GetFoods(ctx, nil, foodsId); err != nil {
 		return 0, common.NewCustomError(err, "Item not exists", "FoodNotExists")
 	}
+	// Get User id,
+
 	// otherwise handle the add to the cart
 	result, err = repo.store.Create(ctx, createCartData)
 

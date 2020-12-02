@@ -6,6 +6,8 @@ import (
 
 type CreateCart struct {
 	common.SQLModel `json:",inline"`
+
+	CartItems []CartItem `json:"cart_items" gorm:"-"`
 }
 
 func (CreateCart) TableName() string {
