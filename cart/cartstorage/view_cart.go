@@ -9,18 +9,18 @@ import (
 func (store *cartMysql) ViewCart(
 	ctx context.Context,
 	userId int,
-) (*cartmodel.Cart, error) {
+) ([]cartmodel.Cart, error) {
 	// define
-	var cart cartmodel.Cart
+	var cart []cartmodel.Cart
 	// find the cart with where status = 1
 	// SHOULD update to fine where user_id == userid :)
 	db := store.db.Table(cartmodel.Cart{}.TableName()).Where("status = 1")
 
 	// handle error
-	if err := db.Where("user_id = ?", userId).First(&cart).Error; err != nil {
+	if err := db.Find(&cart).Where("user_id = ?", userId).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 
 	//return
-	return &cart, nil
+	return cart, nil
 }

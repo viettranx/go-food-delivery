@@ -6,7 +6,7 @@ import (
 )
 
 type CartDetailStorage interface {
-	ViewCart(ctx context.Context, userId int) (*cartmodel.Cart, error)
+	ViewCart(ctx context.Context, userId int) ([]cartmodel.Cart, error)
 }
 
 type cartDetailRepo struct {
@@ -17,7 +17,7 @@ func NewCartDetailRepo(store CartDetailStorage) *cartDetailRepo {
 	return &cartDetailRepo{store: store}
 }
 
-func (repo *cartDetailRepo) GetCart(ctx context.Context, userId int) (*cartmodel.Cart, error) {
+func (repo *cartDetailRepo) GetCart(ctx context.Context, userId int) ([]cartmodel.Cart, error) {
 	cartDetail, err := repo.store.ViewCart(ctx, userId)
 
 	if err != nil {

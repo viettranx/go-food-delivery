@@ -24,6 +24,8 @@ drop table if exists restaurants;
 
 drop table if exists users;
 
+drop table if exists carts;
+
 create table addresses
 (
     id         int auto_increment primary key,
@@ -183,13 +185,13 @@ create table images
 	height  int not null
 );
 
-CREATE TABLE carts
+create table carts
 (
-    user_id    INT(11)   NOT NULL,
-    food_id    INT(11)   NOT NULL,
-    quantity   int            default 1 NOT NULL,
-    status     BOOLEAN   NOT NULL,
-    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id    int   NOT NULL,
+    food_id    int   NOT NULL,
+    quantity   int   NOT NULL,
+    status     int   default 1 NOT NULL,
+    created_at timestamp default current_timestamp      null,
+    updated_at timestamp default current_timestamp on update current_timestamp null,
     primary key (food_id, user_id)
 );
