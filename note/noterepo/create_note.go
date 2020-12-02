@@ -36,7 +36,11 @@ func (repo *createNoteRepo) CreateNote(ctx context.Context, data *notemodel.Note
 		return common.ErrCannotCreateEntity(notemodel.EntityName, errors.New("images not enough"))
 	}
 
-	t := common.Images(imgs)
+	imgsTemp := make([]*common.Image, len(imgs))
+	for i := range imgs {
+		imgsTemp[i] = &imgs[i]
+	}
+	t := common.Images(imgsTemp)
 	data.Images = &t
 
 	err = repo.store.Create(ctx, data)
