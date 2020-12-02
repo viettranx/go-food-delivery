@@ -11,20 +11,20 @@ import (
 
 func AddToCart(appCtx common.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var carts []cartmodel.Cart
 		db := appCtx.GetDBConnection()
-		userID := cartmodel.CartCreation{
-			FoodId:   12,
-			Quantity: 1,
-		}
-		if err := c.ShouldBind(&userID); err != nil {
+
+		if err := c.ShouldBind(&carts); err != nil {
 			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
 			return
 		}
 
+		// TODO: get userId
+
 		store := cartstorage.NewCartMysql(db)
 		repo := cartrepo.NewCreateCartRepo(store)
 
-		result, err := repo.AddToCart(c.Request.Context(), &userID)
+		result, err := repo.AddToCart(c.Request.Context(), &carts)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)

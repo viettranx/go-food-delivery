@@ -18,11 +18,15 @@ func ShowCart(appCtx common.AppContext) func(*gin.Context) {
 			return
 		}
 
+		// TODO: get UserId
+
+		userId := 1
+
 		db := appCtx.GetDBConnection()
 		store := cartstorage.NewCartMysql(db)
 		repo := cartrepo.NewCartDetailRepo(store)
 
-		result, err := repo.ShowCartDetailFromUser(c.Request.Context(), p.UserId)
+		result, err := repo.GetCart(c.Request.Context(), userId)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, common.ErrCannotGetEntity(cartmodel.EntityName, err))
 		}

@@ -6,7 +6,7 @@ import (
 )
 
 type UpdateCartStorage interface {
-	UpdateCart(ctx context.Context, updateData cartmodel.CartUpdate) (*cartmodel.Cart, error)
+	UpdateCart(ctx context.Context, updateData *cartmodel.Cart) (int, error)
 }
 
 type updateCartRepo struct {
@@ -17,12 +17,11 @@ func NewUpdateCartRepo(store UpdateCartStorage) *updateCartRepo {
 	return &updateCartRepo{store: store}
 }
 
-func (repo *updateCartRepo) UpdateCartFromUser(ctx context.Context, updateData cartmodel.CartUpdate) (*cartmodel.Cart, error) {
-	cartDetail, err := repo.store.UpdateCart(ctx, updateData)
+func (repo *updateCartRepo) UpdateCart(ctx context.Context, updateData *cartmodel.Cart) (int, error) {
 
-	if err != nil {
-		return nil, err
+	if _, err := repo.store.UpdateCart(ctx, updateData); err != nil {
+		return 0, err
 	}
 
-	return cartDetail, nil
+	return 1, nil
 }

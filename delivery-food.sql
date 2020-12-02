@@ -180,8 +180,16 @@ create table images
 	id      int auto_increment primary key,
 	url     text not null,
 	width   int not null,
-	height  int not null,
+	height  int not null
 );
 
-
-
+CREATE TABLE carts
+(
+    user_id    INT(11)   NOT NULL,
+    food_id    INT(11)   NOT NULL,
+    quantity   int            default 1 NOT NULL,
+    status     BOOLEAN   NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    primary key (food_id, user_id)
+);

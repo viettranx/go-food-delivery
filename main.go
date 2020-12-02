@@ -67,7 +67,7 @@ func main() {
 	// add a item to the cart
 	cart.POST("/add", carthdl.AddToCart(appCtx))
 	// Update cart (by remove items adjust quantity, ..
-	cart.PUT("/add", carthdl.UpdateCart(appCtx))
+	cart.PUT("", carthdl.UpdateCart(appCtx))
 	// checkout -> create an order.
 	cart.POST("/checkout", nil)
 

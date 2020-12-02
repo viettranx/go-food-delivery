@@ -6,9 +6,10 @@ import (
 	"fooddlv/common"
 )
 
-func (store *cartMysql) ShowCartFromUser(
+func (store *cartMysql) ViewCart(
 	ctx context.Context,
-	userId string) (*cartmodel.Cart, error) {
+	userId int,
+) (*cartmodel.Cart, error) {
 	// define
 	var cart cartmodel.Cart
 	// find the cart with where status = 1

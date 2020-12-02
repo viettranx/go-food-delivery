@@ -10,7 +10,7 @@ import (
 /**
 Create a cart, return ID if can create a item, and 0 if error
 */
-func (store *cartMysql) UpdateCart(ctx context.Context, cartUpdateData *cartmodel.CartUpdate) (int, error) {
+func (store *cartMysql) UpdateCart(ctx context.Context, cartUpdateData *cartmodel.Cart) (int, error) {
 	// init db
 	db := store.db.Begin()
 	// create data to db
@@ -20,5 +20,5 @@ func (store *cartMysql) UpdateCart(ctx context.Context, cartUpdateData *cartmode
 		return 0, common.ErrDB(err)
 	}
 
-	return cartUpdateData.ID, nil
+	return 1, nil
 }
