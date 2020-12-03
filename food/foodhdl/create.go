@@ -7,31 +7,30 @@ import (
 	"fooddlv/food/foodmodel"
 	"fooddlv/food/foodrepo"
 	"fooddlv/food/foodstorage"
+	"fooddlv/upload/imgstorage"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"net/http"
 )
 
-type fakeImageStore struct{}
+type fakeImageStore struct {
+	db *gorm.DB
+}
 
-func (fakeImageStore) GetImages(ctx context.Context, cond map[string]interface{}, ids []int) ([]common.Image, error) {
+func NewFakeImageStore(db *gorm.DB) *fakeImageStore {
+	return &fakeImageStore{
+		db: db,
+	}
+}
+
+func (imageStore fakeImageStore) GetImages(ctx context.Context, cond map[string]interface{}, ids []int) ([]common.Image, error) {
 	if len(ids) == 0 {
 		return nil, errors.New("image ids can not be empty")
 	}
 
-	return []common.Image{
-		{
-			Id:     1,
-			Url:    "https://",
-			Width:  100,
-			Height: 100,
-		},
-		{
-			Id:     2,
-			Url:    "https://",
-			Width:  200,
-			Height: 200,
-		},
-	}, nil
+	imageStorage := imgstorage.NewImgSqlStorage(imageStore.db)
+
+	return imageStorage.GetImages(ctx, cond, ids)
 }
 
 func (fakeImageStore) DeleteImages(ctx context.Context, ids []int) error {
@@ -50,7 +49,7 @@ func CreateFood(appCtx common.AppContext) func(*gin.Context) {
 		db := appCtx.GetDBConnection()
 		store := foodstorage.NewMysqlStore(db)
 
-		repo := foodrepo.NewCreateFoodRepo(store, &fakeImageStore{})
+		repo := foodrepo.NewCreateFoodRepo(store, NewFakeImageStore(db))
 		if err := repo.CreateFood(c.Request.Context(), &data); err != nil {
 			panic(err)
 		}
