@@ -3,39 +3,42 @@ package cartrepo
 import (
 	"context"
 	"fooddlv/cart/cartmodel"
+	"fooddlv/common"
 )
 
-//type GetFoodStorage interface {
-//	GetFoods(ctx context.Context, cond map[string]interface{}, id []int) ([]Food, error)
-//}
+type GetUserIdStore interface {
+	GetUserId(ctx context.Context) (int, error)
+}
 
-type CartStorage interface {
-	Create(ctx context.Context, createCartsData *[]cartmodel.Cart) (int, error)
+type CreateCartStorage interface {
+	Create(ctx context.Context, createCartsData []*cartmodel.Cart) error
 }
 
 type createCartRepo struct {
-	//foodStore GetFoodStorage
-	store CartStorage
+	userIDStore GetUserIdStore
+	store       CreateCartStorage
 }
 
-func NewCreateCartRepo(store CartStorage) *createCartRepo {
-	return &createCartRepo{store: store}
+func NewCreateCartRepo(store CreateCartStorage, userIDStore GetUserIdStore) *createCartRepo {
+	return &createCartRepo{store: store, userIDStore: userIDStore}
 }
 
-func (repo *createCartRepo) AddToCart(ctx context.Context, createCartsData *[]cartmodel.Cart) (result int, err error) {
-	// Get foods info
-	//foodsId := make([]int, len(createCartsData))
-	//for i := range foodsId {
-	//	foodsId[i] = createCartsData[i].FoodId
-	//}
+func (repo *createCartRepo) CreateCart(ctx context.Context, createCartsData []*cartmodel.Cart) (result []int, err error) {
 
-	//if _, err := repo.foodStore.GetFoods(ctx, nil, foodsId); err != nil {
-	//	return 0, common.NewCustomError(err, "Item not exists", "FoodNotExists")
-	//}
 	// Get User id,
-
+	userId, err := repo.userIDStore.GetUserId(ctx)
+	result = make([]int, len(createCartsData))
+	if err != nil {
+		return nil, common.ErrCannotCreateEntity(cartmodel.EntityName, err)
+	}
+	for i := range createCartsData {
+		createCartsData[i].UserID = userId
+		result[i] = createCartsData[i].FoodID
+	}
 	// otherwise handle the add to the cart
-	result, err = repo.store.Create(ctx, createCartsData)
-
+	err = repo.store.Create(ctx, createCartsData)
+	if err := repo.store.Create(ctx, createCartsData); err != nil {
+		return nil, common.ErrCannotCreateEntity(cartmodel.EntityName, err)
+	}
 	return result, nil
 }

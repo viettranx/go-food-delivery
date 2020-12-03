@@ -6,7 +6,7 @@ import (
 	"fooddlv/common"
 )
 
-func (store *cartMysql) ViewCart(
+func (store *cartMysql) List(
 	ctx context.Context,
 	userId int,
 ) ([]cartmodel.Cart, error) {
@@ -17,7 +17,7 @@ func (store *cartMysql) ViewCart(
 	db := store.db.Table(cartmodel.Cart{}.TableName()).Where("status = 1")
 
 	// handle error
-	if err := db.Find(&cart).Where("user_id = ?", userId).Error; err != nil {
+	if err := db.Preload("Food").Where("user_id = ?", userId).Find(&cart).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 

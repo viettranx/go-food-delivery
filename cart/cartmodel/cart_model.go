@@ -8,37 +8,33 @@ import (
 const EntityName string = "carts"
 
 type Cart struct {
-	UserId    int        `json:"user_id" gorm:"column:user_id;"`
-	FoodId    int        `json:"food_id" gorm:"column:food_id;"`
-	Food      SimpleFood `gorm:"TYPE:integer REFERENCES foods"`
+	UserID    int        `json:"user_id" gorm:"column:user_id;"`
+	FoodID    int        `json:"food_id" gorm:"column:food_id;"`
+	Food      Food       `gorm:"foreignKey:FoodID"`
 	Quantity  int        `json:"quantity" gorm:"column:quantity;"`
 	Status    int        `json:"status" gorm:"column:status;default:1"`
 	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at;"`
 	UpdatedAt *time.Time `json:"updated_at" gorm:"column:updated_at;"`
 }
 
-type CartData struct {
-	UserId int `json:"user_id" gorm:"column:user_id"`
-	Carts  []Cart
-}
-
 func (Cart) TableName() string {
 	return EntityName
 }
 
-func (data *CartData) GetCarts() *[]Cart {
-	return &data.Carts
-}
+//func (data *CartData) GetCarts() *[]Cart {
+//	return &data.Carts
+//}
 
-type SimpleFood struct {
+type Food struct {
 	common.SQLModel `json:",inline"`
 	Name            string       `json:"name" gorm:"column:name;"`
 	Description     string       `json:"description" gorm:"column:description;"`
-	Price           float32      `json:"price" gorm:"column:price;"`
-	Images          *common.JSON `json:"images,omitempty" gorm:"column:images;type:json"`
+	Price           int          `json:"price" gorm:"column:price;"`
+	Images          *common.JSON `json:"images,omitempty" gorm:"-"`
+	Status          int          `json:"status" gorm:"column:status;default:1"`
 }
 
-func (SimpleFood) TableName() string {
+func (Food) TableName() string {
 	return "foods"
 }
 
