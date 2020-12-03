@@ -45,9 +45,16 @@ func (repo *createNoteRepo) CreateNote(ctx context.Context, data *notemodel.Note
 		return common.ErrCannotCreateEntity(notemodel.EntityName, err)
 	}
 
+	a := func(ctx context.Context) error {
+		return repo.imgStore.DeleteImages(ctx, data.ImageIds) // side effect
+	}
+
 	go func() {
 		// All images with status 0 is used, otherwise is unused
-		repo.imgStore.DeleteImages(ctx, data.ImageIds) // side effect
+		if err := common.NewJob(a).Execute(ctx); err != nil {
+			repo.imgStore.DeleteImages(ctx, data.ImageIds)
+		}
+
 	}()
 
 	return nil

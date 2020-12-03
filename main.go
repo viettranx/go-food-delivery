@@ -3,6 +3,7 @@ package main
 import (
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
+	"fooddlv/common"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
 	"github.com/gin-gonic/gin"
@@ -57,6 +58,34 @@ func main() {
 	//v1.GET("my-profile", ParseToken, GetProfile)
 	//users := v1.Group("users", ParseToken)
 	//users.GET("/:user-id")
+
+	//job := common.NewJob(func(ctx context.Context) error {
+	//	fmt.Println("Hahaha")
+	//	return errors.New("something went wrong")
+	//})
+	//
+	//log.Println(job.State())
+	//
+	//timeoutCtx, _ := context.WithTimeout(context.Background(), time.Second*10)
+	//go job.Execute(timeoutCtx)
+	//cancelFn()
+
+	//log.Println(job.State(), job.GetError())
+
+	queue := common.NewJobQueue()
+
+	for i := 1; i <= 100; i++ {
+		queue.Emit(common.Message{
+			Name: "A",
+			Data: i,
+		})
+	}
+
+	c := queue.Listen()
+
+	for i := 1; i <= 100; i++ {
+		log.Println(<-c)
+	}
 
 	r.Run()
 }
@@ -121,3 +150,8 @@ type Requester interface {
 // Some APIs have side effect (async method/job). We have to design a job can configurable (timeout, retry count
 // and time), support concurrent and maintainable.
 // TODO: how to implement
+
+// [url img, .....] (100) => save local storage
+// [job, ...] (100)
+// Who control ? => Group
+// [[j1,j2,j3], [j5,j6]] => [j1,j2,j3] serial, [j5,j6] concurrent
