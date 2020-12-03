@@ -8,6 +8,7 @@ import (
 	"fooddlv/note/notehdl"
 	"fooddlv/order_details/detailshdl"
 	"fooddlv/orders/orderhdl"
+	"fooddlv/upload/imghdl"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -45,19 +46,25 @@ func main() {
 
 	notes := v1.Group("/notes")
 	notes.GET("", notehdl.ListNote(appCtx))
+	notes.POST("", notehdl.CreateNote(appCtx))
 	notes.DELETE("/:note-id", notehdl.DeleteNote(appCtx))
 
 	notes.GET("/:note-id", func(c *gin.Context) {
 		noteId := c.Param("note-id")
 		c.String(http.StatusOK, "Hello %s", noteId)
 	})
+
 	auth := v1.Group("/auth")
 	auth.POST("/register", authhdl.Register(appCtx))
 	auth.POST("/login", authhdl.Login(appCtx, secretKey))
 
 	//v1.GET("my-profile", ParseToken, GetProfile)
-	users := v1.Group("users")
-	users.GET("/:user-id")
+	//users := v1.Group("users", ParseToken)
+	//users.GET("/:user-id")
+
+	v1.Static("/file", "./public")
+	upload := v1.Group("/upload")
+	upload.POST("", imghdl.UploadImg(appCtx))
 
 	// -- ORDERS and ORDER-DETAILS -- //
 	// -- CART -- //
@@ -76,6 +83,7 @@ func main() {
 	orders := v1.Group("/orders")
 	orders.GET("", orderhdl.ListOrder(appCtx))
 	orders.GET("/:order-id", detailshdl.ListOrderDetail(appCtx))
+
 
 	r.Run()
 }
