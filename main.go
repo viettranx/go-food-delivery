@@ -3,6 +3,7 @@ package main
 import (
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
+	"fooddlv/food/foodhdl"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
 	"fooddlv/upload/imghdl"
@@ -62,6 +63,12 @@ func main() {
 	v1.Static("/file", "./public")
 	upload := v1.Group("/upload")
 	upload.POST("", imghdl.UploadImg(appCtx))
+
+	foods := v1.Group("/foods")
+	foods.GET("", foodhdl.ListFood(appCtx))
+	foods.GET("/:food-id", foodhdl.FindFood(appCtx))
+	foods.DELETE("/:food-id", foodhdl.DeleteFood(appCtx))
+	foods.POST("", foodhdl.CreateFood(appCtx))
 
 	r.Run()
 }
