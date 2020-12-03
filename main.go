@@ -6,6 +6,7 @@ import (
 	"fooddlv/food/foodhdl"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
+	"fooddlv/upload/imghdl"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -59,10 +60,15 @@ func main() {
 	//users := v1.Group("users", ParseToken)
 	//users.GET("/:user-id")
 
+	v1.Static("/file", "./public")
+	upload := v1.Group("/upload")
+	upload.POST("", imghdl.UploadImg(appCtx))
+
 	foods := v1.Group("/foods")
 	foods.GET("", foodhdl.ListFood(appCtx))
 	foods.GET("/:food-id", foodhdl.FindFood(appCtx))
 	foods.DELETE("/:food-id", foodhdl.DeleteFood(appCtx))
+	foods.POST("", foodhdl.CreateFood(appCtx))
 
 	r.Run()
 }

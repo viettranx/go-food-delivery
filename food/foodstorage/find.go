@@ -5,13 +5,18 @@ import (
 	"fooddlv/food/foodmodel"
 )
 
-func (s *storeMysql) Find(id int) (*foodmodel.Food, error) {
+func (s *storeMysql) Find(id int, moreInfos ...string) (*foodmodel.Food, error) {
 	var food foodmodel.Food
-	err := s.db.Table(foodmodel.
-				Food{}.
-				TableName()).First(&food, id).Error
 
-	if err != nil {
+	db := s.db.Table(foodmodel.
+		Food{}.
+		TableName()).Where("id = ?", id)
+
+	for i := range moreInfos {
+		db = db.Preload(moreInfos[i])
+	}
+
+	if err := db.First(&food).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 

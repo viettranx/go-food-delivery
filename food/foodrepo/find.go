@@ -6,7 +6,7 @@ import (
 )
 
 type FindFoodStorage interface {
-	Find(id int) (*foodmodel.Food, error)
+	Find(id int, moreInfos ...string) (*foodmodel.Food, error)
 }
 
 type findFoodRepo struct {
@@ -17,7 +17,7 @@ func NewFindFoodStorage(storage DeleteFoodStorage) *findFoodRepo {
 	return &findFoodRepo{store: storage}
 }
 
-func (repo *findFoodRepo) Find(id int) (*foodmodel.Food, error)  {
+func (repo *findFoodRepo) Find(id int) (*foodmodel.Food, error) {
 	food, err := repo.store.Find(id)
 
 	if err != nil {

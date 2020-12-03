@@ -7,7 +7,7 @@ import (
 
 type DeleteFoodStorage interface {
 	Delete(id int) error
-	Find(id int) (*foodmodel.Food, error)
+	Find(id int, moreInfos ...string) (*foodmodel.Food, error)
 }
 
 type deleteFoodRepo struct {
@@ -18,7 +18,7 @@ func NewDeleteFoodRepo(storage DeleteFoodStorage) *deleteFoodRepo {
 	return &deleteFoodRepo{store: storage}
 }
 
-func (repo *deleteFoodRepo) Delete(id int) error  {
+func (repo *deleteFoodRepo) Delete(id int) error {
 	_, err := repo.store.Find(id)
 
 	if err != nil {
