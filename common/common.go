@@ -1,9 +1,13 @@
 package common
 
-import "gorm.io/gorm"
+import (
+	"fooddlv/pubsub"
+	"gorm.io/gorm"
+)
 
 type AppContext interface {
 	GetDBConnection() *gorm.DB
+	GetPubsub() pubsub.Pubsub
 }
 
 type Hasher interface {

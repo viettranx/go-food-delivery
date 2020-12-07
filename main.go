@@ -3,7 +3,7 @@ package main
 import (
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
-	"fooddlv/common"
+	"fooddlv/consumers"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
 	"fooddlv/upload/imghdl"
@@ -29,6 +29,8 @@ func main() {
 	}
 
 	appCtx := appctx.NewAppContext(db.Debug())
+	// setup all consumers
+	consumers.Setup(appCtx)
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))
@@ -76,21 +78,6 @@ func main() {
 	//cancelFn()
 
 	//log.Println(job.State(), job.GetError())
-
-	queue := common.NewJobQueue()
-
-	for i := 1; i <= 100; i++ {
-		queue.Emit(common.Message{
-			Name: "A",
-			Data: i,
-		})
-	}
-
-	c := queue.Listen()
-
-	for i := 1; i <= 100; i++ {
-		log.Println(<-c)
-	}
 
 	r.Run()
 }
