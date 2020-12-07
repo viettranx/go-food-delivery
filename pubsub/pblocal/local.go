@@ -76,6 +76,7 @@ func (ps *localPubSub) run() error {
 	go func() {
 		for {
 			mess := <-ps.messageQueue
+			log.Println("Message dequeue:", mess)
 
 			if subs, ok := ps.mapChannel[mess.Channel()]; ok {
 				for i := range subs {
@@ -84,6 +85,9 @@ func (ps *localPubSub) run() error {
 					}(subs[i])
 				}
 			}
+			//else {
+			//	ps.messageQueue <- mess
+			//}
 		}
 	}()
 
