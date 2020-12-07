@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func ListOrder(appCtx common.AppContext) func(ctx *gin.Context) {
+func ListOrder(appCtx common.AppContext) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var param ordermodel.ListParam
 

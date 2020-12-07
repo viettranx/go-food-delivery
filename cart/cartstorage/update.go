@@ -15,7 +15,9 @@ func (store *cartMysql) UpdateCart(ctx context.Context, cartUpdateData *cartmode
 	db := store.db.Begin()
 	// create data to db
 	fmt.Println("update the cart item", cartUpdateData)
-	if err := db.Table(cartmodel.Cart{}.TableName()).Where("user_id = ? AND food_id = ?", userId, cartUpdateData.FoodID).Updates(&cartUpdateData).Error; err != nil {
+	if err := db.Table(cartmodel.Cart{}.TableName()).
+		Where("user_id = ? AND food_id = ?", userId, cartUpdateData.FoodID).
+		Updates(&cartUpdateData).Error; err != nil {
 		db.Rollback()
 		return common.ErrDB(err)
 	}

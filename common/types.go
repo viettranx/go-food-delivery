@@ -104,3 +104,21 @@ func (j *Images) Value() (driver.Value, error) {
 	}
 	return json.Marshal(j)
 }
+
+type OrderStatusEnum int
+
+const (
+	OrderActive    OrderStatusEnum = 1
+	OrderPending   OrderStatusEnum = 2
+	OrderCanceled  OrderStatusEnum = 0
+	OrderDelivered OrderStatusEnum = 3
+)
+
+func (r *OrderStatusEnum) Scan(value int) error {
+	*r = OrderStatusEnum(value)
+	return nil
+}
+
+func (r OrderStatusEnum) Value() (driver.Value, error) {
+	return int(r), nil
+}

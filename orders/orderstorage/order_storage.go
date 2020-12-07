@@ -1,6 +1,8 @@
 package orderstorage
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type orderStorage struct {
 	db *gorm.DB
