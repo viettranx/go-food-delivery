@@ -6,6 +6,8 @@ const EntityName = "OrderDetail"
 
 type Order struct {
 	common.SQLModel `json:",inline"`
+	OrderID         int                    `json:"order_id" gorm:"column:order_id"`
+	Food            string                 `json:"food" gorm:"column:food_origin"`
 	Price           float32                `json:"total" gorm:"column:price"`
 	Quantity        int                    `json:"quantity" gorm:"column:quantity"`
 	Discount        float32                `json:"discount" gorm:"column:discount"`
