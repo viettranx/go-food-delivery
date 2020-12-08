@@ -3,6 +3,7 @@ package main
 import (
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
+	"fooddlv/cart/carthdl"
 	"fooddlv/consumers"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
