@@ -3,7 +3,7 @@ package main
 import (
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
-	"fooddlv/cart/carthdl"
+	"fooddlv/consumers"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl"
 	"fooddlv/order_details/detailshdl"
@@ -31,6 +31,8 @@ func main() {
 	}
 
 	appCtx := appctx.NewAppContext(db.Debug())
+	// setup all consumers
+	consumers.Setup(appCtx)
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))
@@ -57,10 +59,6 @@ func main() {
 	auth := v1.Group("/auth")
 	auth.POST("/register", authhdl.Register(appCtx))
 	auth.POST("/login", authhdl.Login(appCtx, secretKey))
-
-	//v1.GET("my-profile", ParseToken, GetProfile)
-	//users := v1.Group("users", ParseToken)
-	//users.GET("/:user-id")
 
 	v1.Static("/file", "./public")
 	upload := v1.Group("/upload")
