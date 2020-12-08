@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fooddlv/common"
 	"fooddlv/note/notemodel"
+	"fooddlv/pubsub"
 )
 
 type GetImageStorage interface {
 	GetImages(ctx context.Context, cond map[string]interface{}, ids []int) ([]common.Image, error)
-	DeleteImages(ctx context.Context, ids []int) error
 }
 
 type CreateNoteStorage interface {
@@ -19,10 +19,11 @@ type CreateNoteStorage interface {
 type createNoteRepo struct {
 	imgStore GetImageStorage
 	store    CreateNoteStorage
+	pb       pubsub.Pubsub
 }
 
-func NewCreateNoteRepo(imgStore GetImageStorage, store CreateNoteStorage) *createNoteRepo {
-	return &createNoteRepo{imgStore: imgStore, store: store}
+func NewCreateNoteRepo(imgStore GetImageStorage, store CreateNoteStorage, pb pubsub.Pubsub) *createNoteRepo {
+	return &createNoteRepo{imgStore: imgStore, store: store, pb: pb}
 }
 
 func (repo *createNoteRepo) CreateNote(ctx context.Context, data *notemodel.NoteCreate) error {
@@ -45,10 +46,17 @@ func (repo *createNoteRepo) CreateNote(ctx context.Context, data *notemodel.Note
 		return common.ErrCannotCreateEntity(notemodel.EntityName, err)
 	}
 
-	go func() {
-		// All images with status 0 is used, otherwise is unused
-		repo.imgStore.DeleteImages(ctx, data.ImageIds) // side effect
-	}()
+	repo.pb.Publish(ctx, common.ChanNoteCreated, pubsub.NewMessage(data))
+
+	//go func() {
+	//
+	//
+	//	// All images with status 0 is used, otherwise is unused
+	//	if err := common.NewJob(a).Execute(ctx); err != nil {
+	//		repo.imgStore.DeleteImages(ctx, data.ImageIds)
+	//	}
+	//
+	//}()
 
 	return nil
 }

@@ -23,6 +23,10 @@ type NoteCreate struct {
 
 func (NoteCreate) TableName() string { return Note{}.TableName() }
 
+func (n *NoteCreate) GetImageIds() []int {
+	return n.ImageIds
+}
+
 func (n *NoteCreate) Validate() error {
 	n.Title = strings.TrimSpace(n.Title)
 	n.Content = strings.TrimSpace(n.Content)
