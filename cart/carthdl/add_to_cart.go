@@ -1,7 +1,6 @@
 package carthdl
 
 import (
-	"context"
 	"fooddlv/cart/cartmodel"
 	"fooddlv/cart/cartrepo"
 	"fooddlv/cart/cartstorage"
@@ -13,9 +12,6 @@ import (
 type FakeUserIdStore struct {
 }
 
-func (FakeUserIdStore) GetUserId(ctx context.Context) (int, error) {
-	return 1, nil
-}
 func AddToCart(appCtx common.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var carts []*cartmodel.Cart

@@ -22,5 +22,10 @@ func (store *cartMysql) UpdateCart(ctx context.Context, cartUpdateData *cartmode
 		return common.ErrDB(err)
 	}
 
+	if err := db.Commit().Error; err != nil {
+		db.Rollback()
+		common.ErrDB(err)
+	}
+
 	return nil
 }

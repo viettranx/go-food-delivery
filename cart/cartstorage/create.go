@@ -2,7 +2,6 @@ package cartstorage
 
 import (
 	"context"
-	"fmt"
 	"fooddlv/cart/cartmodel"
 	"fooddlv/common"
 )
@@ -15,8 +14,11 @@ func (store *cartMysql) Create(ctx context.Context, cartsCreateData []*cartmodel
 	// init db
 	db := store.db.Begin()
 	// create data to db
-	fmt.Println("create cart", cartsCreateData)
-	if err := db.Table(cartmodel.Cart{}.TableName()).Create(&cartsCreateData).Error; err != nil {
+	if err := db.Table(cartmodel.Cart{}.TableName()).Create(cartsCreateData).Error; err != nil {
+		db.Rollback()
+		return common.ErrDB(err)
+	}
+	if err := db.Commit().Error; err != nil {
 		db.Rollback()
 		return common.ErrDB(err)
 	}

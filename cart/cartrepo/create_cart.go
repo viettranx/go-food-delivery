@@ -36,7 +36,6 @@ func (repo *createCartRepo) CreateCart(ctx context.Context, createCartsData []*c
 		result[i] = createCartsData[i].FoodID
 	}
 	// otherwise handle the add to the cart
-	err = repo.store.Create(ctx, createCartsData)
 	if err := repo.store.Create(ctx, createCartsData); err != nil {
 		return nil, common.ErrCannotCreateEntity(cartmodel.EntityName, err)
 	}
