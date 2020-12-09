@@ -14,7 +14,7 @@ func (store *userMySql) FindUserByCondition(
 ) (*usermodel.User, error) {
 
 	var user usermodel.User
-	db := store.db.Table(usermodel.User{}.TableName()).Where("status = 1")
+	db := store.db.Table(usermodel.User{}.TableName())
 
 	if err := db.Where(conditions).First(&user).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
