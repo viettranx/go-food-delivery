@@ -61,11 +61,12 @@ func RequiredAuth(appCtx common.AppContext, secretKey string) gin.HandlerFunc {
 			return
 		}
 
-		if err := jwtMidd.jwthdl.Validate(c.Request.Context(), payload); err != nil {
+		sUser, err := jwtMidd.jwthdl.Validate(c.Request.Context(), payload);
+		if  err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
 			return
 		}
-		c.Set(common.KeyCurrentUser, payload)
+		c.Set(common.KeyCurrentUser, sUser)
 
 		c.Next()
 	}

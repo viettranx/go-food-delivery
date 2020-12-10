@@ -23,11 +23,14 @@ func NewJwtVerifyRepo(store JwtVerifyStorage) *jwtVerifyRepo {
 	return &jwtVerifyRepo{store: store}
 }
 
-func (repo *jwtVerifyRepo) Validate(ctx context.Context, payload *token.JwtPayload) error {
+func (repo *jwtVerifyRepo) Validate(ctx context.Context, payload *token.JwtPayload) (*common.SimpleUser, error) {
 	user, err := repo.store.FindUserByCondition(ctx, map[string]interface{}{"id": payload.UserId})
 
+
 	if ok := user.IsActive(); !ok {
-		return common.NewUnauthorized(err, "user is deactivate", "ErrUserIsNotActive")
+		return nil,common.NewUnauthorized(err, "user is deactivate", "ErrUserIsNotActive")
 	}
-	return nil
+
+	simpleUser := user.ToSimpleUser()
+	return simpleUser, nil
 }
