@@ -33,3 +33,12 @@ func (u *User) IsActive() bool {
 	}
 	return u.Status == 1
 }
+
+func (u *User) ToSimpleUser() *common.SimpleUser {
+	var simpleUser common.SimpleUser
+	simpleUser.ID = u.ID
+	simpleUser.Email = u.Email
+	simpleUser.Roles = u.Roles
+	return &simpleUser
+}
+

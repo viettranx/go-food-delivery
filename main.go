@@ -61,7 +61,6 @@ func main() {
 	v1.Static("/file", "./public")
 	upload := v1.Group("/upload")
 	upload.POST("", imghdl.UploadImg(appCtx))
-
 	//v1.GET("my-profile", ParseToken, GetProfile)
 	//users := v1.Group("users", ParseToken)
 	//users.GET("/:user-id")
@@ -78,7 +77,6 @@ func main() {
 	//cancelFn()
 
 	//log.Println(job.State(), job.GetError())
-
 	r.Run()
 }
 

@@ -2,11 +2,13 @@ package jwthdl
 
 import (
 	"context"
+	"fooddlv/common"
 	"fooddlv/token"
+	"fooddlv/user/usermodel"
 )
 
 type JwtRepo interface {
-	Validate(ctx context.Context, payload *token.JwtPayload) error
+	Validate(ctx context.Context, payload *token.JwtPayload) (*common.SimpleUser, error)
 }
 
 type jwtHdl struct {
@@ -19,6 +21,10 @@ func NewJwtHdl(repo JwtRepo) *jwtHdl {
 	}
 }
 
-func (hdl *jwtHdl) Validate(ctx context.Context, payload *token.JwtPayload) error {
-	return hdl.repo.Validate(ctx, payload)
+func (hdl *jwtHdl) Validate(ctx context.Context, payload *token.JwtPayload) (*common.SimpleUser, error) {
+	user, err := hdl.repo.Validate(ctx, payload)
+	if err != nil {
+		return nil, common.ErrCannotGetEntity(usermodel.EntityName, err)
+	}
+	return user, nil
 }
