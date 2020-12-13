@@ -32,8 +32,7 @@ func (repo *cancelOrderRepo) CancelOrder(ctx context.Context, orderId int) error
 	if err != nil {
 		return common.ErrCannotGetEntity(detailsmodel.EntityName, err)
 	}
-
-	updateData.Status = common.OrderCanceled
+	(*updateData).Status = common.OrderCanceled
 
 	if err := repo.store.Update(ctx, updateData, userId); err != nil {
 		return err

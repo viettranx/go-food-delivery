@@ -109,15 +109,15 @@ type OrderStatusEnum int
 const (
 	OrderActive    OrderStatusEnum = 1
 	OrderPending   OrderStatusEnum = 2
-	OrderCanceled  OrderStatusEnum = 0
+	OrderCanceled  OrderStatusEnum = -1
 	OrderDelivered OrderStatusEnum = 3
 )
 
-func (r *OrderStatusEnum) Scan(value int) error {
-	*r = OrderStatusEnum(value)
-	return nil
-}
-
-func (r OrderStatusEnum) Value() (driver.Value, error) {
-	return int(r), nil
-}
+//func (r *OrderStatusEnum) Scan(value int) error {
+//	*r = OrderStatusEnum(value)
+//	return nil
+//}
+//
+//func (r OrderStatusEnum) Value() (driver.Value, error) {
+//	return int(r), nil
+//}

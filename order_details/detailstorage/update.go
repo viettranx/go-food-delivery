@@ -19,5 +19,9 @@ func (s *orderDetailStorage) Update(
 		db.Rollback()
 		return common.ErrDB(err)
 	}
+	if err := db.Commit().Error; err != nil {
+		db.Rollback()
+		return common.ErrDB(err)
+	}
 	return nil
 }

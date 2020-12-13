@@ -89,8 +89,8 @@ func main() {
 	orders.GET("", orderhdl.ListOrder(appCtx))
 
 	ordersDetail := orders.Group("/:order-id")
+	orders.POST("/cancel/:order-id", detailshdl.CancelOrder(appCtx))
 	ordersDetail.GET("", detailshdl.ListOrderDetail(appCtx))
-	orders.POST("/cancel", detailshdl.CancelOrder(appCtx))
 
 	//job := common.NewJob(func(ctx context.Context) error {
 	//	fmt.Println("Hahaha")
