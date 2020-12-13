@@ -93,7 +93,6 @@ func (j *Images) Scan(value interface{}) error {
 	}
 
 	*j = img
-
 	return nil
 }
 

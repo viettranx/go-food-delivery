@@ -50,8 +50,28 @@ func (j *JWT) Generate(user usermodel.User, opts ...token.GenerateOption) (*toke
 	}, nil
 }
 
-func (j *JWT) Inspect(token string) (*token.JwtPayload, error) {
-	panic("implement me")
+func (j *JWT) Inspect(t string) (*token.JwtPayload, error) {
+
+	// parse the public key
+	res, err := jwt.ParseWithClaims(t, &authClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return j.opts.SecretKey, nil
+	})
+
+	if err != nil {
+		return nil, token.ErrInvalidToken
+	}
+
+	// validate the token
+	if !res.Valid {
+		return nil, token.ErrInvalidToken
+	}
+	claims, ok := res.Claims.(*authClaims)
+	if !ok {
+		return nil, token.ErrInvalidToken
+	}
+
+	// return the token
+	return &claims.Payload, nil
 }
 
 func (j *JWT) String() string {

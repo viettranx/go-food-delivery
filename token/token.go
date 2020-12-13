@@ -28,6 +28,10 @@ type JwtPayload struct {
 	Role   string `json:"role"`
 }
 
+func (jp *JwtPayload) GetUserId() int {
+	return jp.UserId
+}
+
 type Provider interface {
 	Generate(user usermodel.User, opts ...GenerateOption) (*Token, error)
 	Inspect(token string) (*JwtPayload, error)

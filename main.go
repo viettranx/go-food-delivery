@@ -104,22 +104,6 @@ func main() {
 	//cancelFn()
 
 	//log.Println(job.State(), job.GetError())
-
-	//queue := common.NewJobQueue()
-	//
-	//for i := 1; i <= 2; i++ {
-	//	queue.Emit(common.Message{
-	//		Name: "A",
-	//		Data: i,
-	//	})
-	//}
-	//
-	//c := queue.Listen()
-	//
-	//for i := 1; i <= 100; i++ {
-	//	log.Println(<-c)
-	//}
-
 	r.Run()
 }
 
