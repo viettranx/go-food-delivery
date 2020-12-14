@@ -1,4 +1,4 @@
-package common
+package asyncjob
 
 import (
 	"context"
@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	defaultRetryTime = []int{1, 5, 15}
+	defaultRetryTime = []time.Duration{time.Second, time.Second * 5, time.Second * 10}
 )
 
 type JobHandler func(ctx context.Context) error
@@ -27,11 +27,12 @@ const (
 	StateFailed
 	StateTimeout
 	StateCompleted
+	StateRetryFailed
 )
 
 type jobConfig struct {
 	MaxTimeout time.Duration
-	Retries    []int
+	Retries    []time.Duration
 }
 
 func (js JobState) String() string {
@@ -43,7 +44,6 @@ type job struct {
 	handler    JobHandler
 	state      JobState
 	retryIndex int
-	errChan    chan error
 	stopChan   chan bool
 }
 
@@ -56,7 +56,6 @@ func NewJob(handler JobHandler) *job {
 		handler:    handler,
 		retryIndex: -1,
 		state:      StateInit,
-		errChan:    make(chan error, 1),
 		stopChan:   make(chan bool),
 	}
 
@@ -74,37 +73,61 @@ func (j *job) Execute(ctx context.Context) error {
 
 	err = j.handler(ctx)
 
-	if err != nil {
-		j.retryIndex = 0
-
-		for j.retryIndex < len(j.config.Retries) {
-
-			time.Sleep(time.Second * time.Duration(j.config.Retries[j.retryIndex]))
-			err = j.handler(ctx)
-
-			if err == nil {
-				break
-			}
-
-			j.retryIndex += 1
-		}
-	}
+	//if err != nil {
+	//	j.retryIndex = 0
+	//
+	//	for j.retryIndex < len(j.config.Retries) {
+	//
+	//		time.Sleep(time.Second * time.Duration(j.config.Retries[j.retryIndex]))
+	//		err = j.handler(ctx)
+	//
+	//		if err == nil {
+	//			break
+	//		}
+	//
+	//		j.retryIndex += 1
+	//	}
+	//}
 
 	if err != nil {
 		j.state = StateFailed
-		j.errChan <- err
 		return err
 	}
 
 	j.state = StateCompleted
-	j.errChan <- nil
-
 	return nil
+}
+
+func (j *job) Retry(ctx context.Context) error {
+	j.retryIndex += 1
+	time.Sleep(j.config.Retries[j.retryIndex])
+
+	j.state = StateRunning
+	err := j.Execute(ctx)
+
+	if err == nil {
+		return nil
+	}
+
+	if j.retryIndex == len(j.config.Retries)-1 {
+		j.state = StateRetryFailed
+		return err
+	}
+
+	j.state = StateFailed
+	return err
 }
 
 func (j *job) State() JobState { return j.state }
 func (j *job) RetryIndex() int { return j.retryIndex }
-func (j *job) GetError() error { return <-j.errChan }
+
+func (j *job) SetRetryDurations(times []time.Duration) {
+	if len(times) == 0 {
+		return
+	}
+
+	j.config.Retries = times
+}
 
 //
 //func (j *job) Stop() {

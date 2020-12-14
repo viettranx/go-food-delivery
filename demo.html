@@ -1,0 +1,24 @@
+<!doctype html>
+
+<head>
+    <title>Demo socket 200lab </title>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+</head>
+
+
+
+<body>
+<div id="main">
+
+</div>
+
+<script>
+    var socket = io.connect("", {
+        // transports: ['websocket'],
+    }).on('connect', () => function (){
+        console.log('Client connected');
+    })
+</script>
+</body>
+
+</html>

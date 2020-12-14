@@ -1,4 +1,4 @@
-package notehdl
+package ginnote
 
 import (
 	"fooddlv/common"

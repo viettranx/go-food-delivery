@@ -1,13 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
 	"fooddlv/consumers"
 	"fooddlv/middleware"
-	"fooddlv/note/notehdl"
+	"fooddlv/note/notehdl/ginnote"
 	"fooddlv/upload/imghdl"
 	"github.com/gin-gonic/gin"
+	socketio "github.com/googollee/go-socket.io"
+	"github.com/googollee/go-socket.io/engineio"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -45,9 +48,9 @@ func main() {
 	v1 := r.Group("/v1")
 
 	notes := v1.Group("/notes")
-	notes.GET("", notehdl.ListNote(appCtx))
-	notes.POST("", notehdl.CreateNote(appCtx))
-	notes.DELETE("/:note-id", notehdl.DeleteNote(appCtx))
+	notes.GET("", ginnote.ListNote(appCtx))
+	notes.POST("", ginnote.CreateNote(appCtx))
+	notes.DELETE("/:note-id", ginnote.DeleteNote(appCtx))
 
 	notes.GET("/:note-id", func(c *gin.Context) {
 		noteId := c.Param("note-id")
@@ -78,8 +81,52 @@ func main() {
 	//cancelFn()
 
 	//log.Println(job.State(), job.GetError())
-
+	startSocketIOServer(r)
 	r.Run()
+}
+
+func startSocketIOServer(engine *gin.Engine) {
+	server, _ := socketio.NewServer(&engineio.Options{
+		//Transports: []transport.Transport{websocket.Default},
+	})
+
+	server.OnConnect("/", func(s socketio.Conn) error {
+		s.SetContext("")
+		fmt.Println("connected:", s.ID())
+		return nil
+	})
+
+	server.OnEvent("/", "notice", func(s socketio.Conn, msg string) {
+		fmt.Println("notice:", msg)
+		s.Emit("reply", "have "+msg)
+	})
+
+	server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
+		s.SetContext(msg)
+		return "recv " + msg
+	})
+
+	server.OnEvent("/", "bye", func(s socketio.Conn) string {
+		last := s.Context().(string)
+		s.Emit("bye", last)
+		s.Close()
+		return last
+	})
+
+	server.OnError("/", func(s socketio.Conn, e error) {
+		fmt.Println("meet error:", e)
+	})
+
+	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
+		fmt.Println("closed", reason)
+	})
+
+	go server.Serve()
+
+	engine.GET("/socket.io/*any", gin.WrapH(server))
+	engine.POST("/socket.io/*any", gin.WrapH(server))
+
+	engine.StaticFile("/demo/", "./demo.html")
 }
 
 type Requester interface {
@@ -147,3 +194,8 @@ type Requester interface {
 // [job, ...] (100)
 // Who control ? => Group
 // [[j1,j2,j3], [j5,j6]] => [j1,j2,j3] serial, [j5,j6] concurrent
+
+// Caching: Only owner resource can update/invalid cache
+
+// Socket Connection (struct - lib provide)
+// => App Socket Connection (current user, permission)
