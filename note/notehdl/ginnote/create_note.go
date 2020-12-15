@@ -55,7 +55,6 @@ func CreateNote(appCtx common.AppContext) func(*gin.Context) {
 
 		db := appCtx.GetDBConnection()
 		store := notestorage.NewMysqlStore(db)
-
 		repo := noterepo.NewCreateNoteRepo(&fakeImageStore{}, store, appCtx.GetPubsub())
 		if err := repo.CreateNote(c.Request.Context(), &data); err != nil {
 			panic(err)

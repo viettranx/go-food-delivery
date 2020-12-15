@@ -10,7 +10,6 @@ import (
 
 type GetImageStorage interface {
 	GetImages(ctx context.Context, cond map[string]interface{}, ids []int) ([]common.Image, error)
-	//DeleteImages(ctx context.Context, ids []int) error
 }
 
 type CreateNoteStorage interface {
@@ -24,7 +23,7 @@ type createNoteRepo struct {
 }
 
 func NewCreateNoteRepo(imgStore GetImageStorage, store CreateNoteStorage, pb pubsub.Pubsub) *createNoteRepo {
-	return &createNoteRepo{imgStore: imgStore, store: store}
+	return &createNoteRepo{imgStore: imgStore, store: store, pb: pb}
 }
 
 func (repo *createNoteRepo) CreateNote(ctx context.Context, data *notemodel.NoteCreate) error {

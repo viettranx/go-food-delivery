@@ -26,3 +26,19 @@ func (u *User) ComparePassword(hasher common.Hasher) bool {
 	hashedPassword := hasher.Hash()
 	return u.Password == hashedPassword
 }
+
+func (u *User) IsActive() bool {
+	if u == nil {
+		return false
+	}
+	return u.Status == 1
+}
+
+func (u *User) ToSimpleUser() *common.SimpleUser {
+	var simpleUser common.SimpleUser
+	simpleUser.ID = u.ID
+	simpleUser.Email = u.Email
+	simpleUser.Roles = u.Roles
+	return &simpleUser
+}
+
