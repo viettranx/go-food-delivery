@@ -3,12 +3,18 @@ package consumers
 import (
 	"context"
 	"fooddlv/common"
+	"fooddlv/common/asyncjob"
 	"fooddlv/pubsub"
+	"log"
 )
 
+type consumerJob struct {
+	Title string
+	Hld   func(ctx context.Context, message *pubsub.Message) error
+}
+
 func Setup(ctx common.AppContext) {
-	RunDeleteImageRecordAfterCreateNote(ctx, context.Background())
-	RunSendNotificationAfterCreateNote(ctx, context.Background())
+
 }
 
 type consumerEngine struct {
@@ -27,6 +33,13 @@ func (engine *consumerEngine) Start() error {
 	//	asyncjob.NewJob(SendNotificationAfterCreateNote(engine.appCtx, context.Background(), nil))),
 	//)
 
+	engine.startSubTopic(
+		common.ChanNoteCreated,
+		true,
+		SendNotificationAfterCreateNote(engine.appCtx),
+		SendEmailAfterCreateNote(engine.appCtx),
+	)
+
 	return nil
 }
 
@@ -34,16 +47,39 @@ type GroupJob interface {
 	Run(ctx context.Context) error
 }
 
-func (engine *consumerEngine) startSubTopic(topic pubsub.Channel, group GroupJob) error {
+func (engine *consumerEngine) startSubTopic(topic pubsub.Channel, isParallel bool, hdls ...consumerJob) error {
+	// forever: listen message and execute group
+	// hdls => []job
+	// new group ([]job)
 
-	//c, _ := engine.appCtx.GetPubsub().Subscribe(context.Background(), topic)
+	c, _ := engine.appCtx.GetPubsub().Subscribe(context.Background(), topic)
 
-	//go func() {
-	//	for {
-	//		msg := <-c
-	//		group.Run()
-	//	}
-	//}()
+	for _, item := range hdls {
+		log.Println("Setup for", item.Title)
+	}
+
+	getHld := func(job *consumerJob, message *pubsub.Message) func(ctx context.Context) error {
+		return func(ctx context.Context) error {
+			log.Println("running job for ", job.Title, ". Value: ", message.Data())
+			return job.Hld(ctx, message)
+		}
+	}
+
+	go func() {
+		for {
+			msg := <-c
+
+			jobHdlArr := make([]asyncjob.Job, len(hdls))
+			for i := range hdls {
+				jobHdlArr[i] = asyncjob.NewJob(getHld(&hdls[i], msg))
+			}
+
+			group := asyncjob.NewGroup(isParallel, jobHdlArr...)
+			if err := group.Run(context.Background()); err != nil {
+				log.Println(err)
+			}
+		}
+	}()
 
 	return nil
 }

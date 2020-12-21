@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+type Job interface {
+	Execute(ctx context.Context) error
+	Retry(ctx context.Context) error
+	State() JobState
+	SetRetryDurations(times []time.Duration)
+}
+
 // Some APIs have side effect (async method/job). We have to design a job can configurable (timeout, retry count
 // and time), support concurrent and maintainable.
 

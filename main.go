@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
+	"fooddlv/common"
 	"fooddlv/consumers"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl/ginnote"
+	"fooddlv/pubsub"
 	"fooddlv/upload/imghdl"
 	"github.com/gin-gonic/gin"
 	socketio "github.com/googollee/go-socket.io"
@@ -16,6 +19,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 // Tier layer
@@ -33,7 +37,13 @@ func main() {
 
 	appCtx := appctx.NewAppContext(db.Debug())
 	// setup all consumers
-	consumers.Setup(appCtx)
+	//consumers.Setup(appCtx)
+	consumers.NewEngine(appCtx).Start()
+
+	go func() {
+		time.Sleep(time.Second * 3)
+		appCtx.GetPubsub().Publish(context.Background(), common.ChanNoteCreated, pubsub.NewMessage(10))
+	}()
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))
@@ -93,6 +103,13 @@ func startSocketIOServer(engine *gin.Engine) {
 	server.OnConnect("/", func(s socketio.Conn) error {
 		s.SetContext("")
 		fmt.Println("connected:", s.ID())
+
+		//go func() {
+		//	for {
+		//		s.Emit("test", "a")
+		//		time.Sleep(time.Second)
+		//	}
+		//}()
 		return nil
 	})
 

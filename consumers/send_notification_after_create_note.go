@@ -24,9 +24,22 @@ func RunSendNotificationAfterCreateNote(appCtx common.AppContext, ctx context.Co
 	}()
 }
 
-func SendNotificationAfterCreateNote(appCtx common.AppContext, ctx context.Context) asyncjob.JobHandler {
-	return func(ctx context.Context) error {
-		//log.Println("Send notification for note:", msg.Data())
-		return nil
+// Pubsub ---- Wrapper (Engine) ----- Group has Jobs (contains Consumer)
+
+func SendNotificationAfterCreateNote(appCtx common.AppContext) consumerJob {
+	return consumerJob{
+		Title: "Send notification after create note",
+		Hld: func(ctx context.Context, message *pubsub.Message) error {
+			return nil
+		},
+	}
+}
+
+func SendEmailAfterCreateNote(appCtx common.AppContext) consumerJob {
+	return consumerJob{
+		Title: "Send email after create note",
+		Hld: func(ctx context.Context, message *pubsub.Message) error {
+			return nil
+		},
 	}
 }

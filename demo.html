@@ -2,7 +2,7 @@
 
 <head>
     <title>Demo socket 200lab </title>
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.js"></script>
 </head>
 
 
@@ -13,11 +13,14 @@
 </div>
 
 <script>
-    var socket = io.connect("", {
+    const socket = io("", {
         // transports: ['websocket'],
-    }).on('connect', () => function (){
+    });
+    socket.on('connect', () => {
         console.log('Client connected');
     })
+
+    socket.on('test', (msg) => console.log(msg));
 </script>
 </body>
 
