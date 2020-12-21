@@ -30,6 +30,9 @@ func SendNotificationAfterCreateNote(appCtx common.AppContext) consumerJob {
 	return consumerJob{
 		Title: "Send notification after create note",
 		Hld: func(ctx context.Context, message *pubsub.Message) error {
+			log.Println("SendNotificationAfterCreateNote ", message.Data())
+			// Find all socket of userId and emit
+
 			return nil
 		},
 	}
@@ -39,6 +42,7 @@ func SendEmailAfterCreateNote(appCtx common.AppContext) consumerJob {
 	return consumerJob{
 		Title: "Send email after create note",
 		Hld: func(ctx context.Context, message *pubsub.Message) error {
+			log.Println("SendEmailAfterCreateNote ", message.Data())
 			return nil
 		},
 	}

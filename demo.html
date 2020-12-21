@@ -14,13 +14,38 @@
 
 <script>
     const socket = io("", {
-        // transports: ['websocket'],
+        transports: ['websocket'],
     });
+
+
     socket.on('connect', () => {
         console.log('Client connected');
+
+        // Emit token
+        socket.emit('authenticate', 'abcsakdasjkjsakjdkajdjaswiqe');
     })
 
+    // socket.on('authenticated', () => {
+    //
+    // })
+
     socket.on('test', (msg) => console.log(msg));
+    socket.on('reply', (msg) => console.log(msg));
+
+    socket.on('disconnect', () => console.log('Socket is disconnected'))
+
+    // setInterval(function () {
+    //     socket.emit('notice', {age: 10})
+    // }, 1000)
+
+    // const socket2 = io("/chat", {
+    //     // transports: ['websocket'],
+    // });
+    //
+    // socket2.on('connect', () => {
+    //     console.log('Client socket2 connected');
+    // })
+
 </script>
 </body>
 

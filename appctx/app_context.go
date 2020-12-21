@@ -9,6 +9,7 @@ import (
 type appContext struct {
 	db *gorm.DB
 	ps pubsub.Pubsub
+	rt RealtimeEngine
 }
 
 func NewAppContext(db *gorm.DB) *appContext {

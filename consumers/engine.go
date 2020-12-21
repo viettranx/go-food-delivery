@@ -35,7 +35,7 @@ func (engine *consumerEngine) Start() error {
 
 	engine.startSubTopic(
 		common.ChanNoteCreated,
-		true,
+		false,
 		SendNotificationAfterCreateNote(engine.appCtx),
 		SendEmailAfterCreateNote(engine.appCtx),
 	)
@@ -55,7 +55,7 @@ func (engine *consumerEngine) startSubTopic(topic pubsub.Channel, isParallel boo
 	c, _ := engine.appCtx.GetPubsub().Subscribe(context.Background(), topic)
 
 	for _, item := range hdls {
-		log.Println("Setup for", item.Title)
+		log.Println("Setup consumer for:", item.Title)
 	}
 
 	getHld := func(job *consumerJob, message *pubsub.Message) func(ctx context.Context) error {
@@ -70,11 +70,20 @@ func (engine *consumerEngine) startSubTopic(topic pubsub.Channel, isParallel boo
 			msg := <-c
 
 			jobHdlArr := make([]asyncjob.Job, len(hdls))
+
 			for i := range hdls {
+
+				// capture msg & hlds[i]
+				//jobHdl := func(ctx context.Context) error {
+				//	log.Println("running job for ", hdls[i].Title, ". Value: ", msg.Data())
+				//	return hdls[i].Hld(ctx, msg)
+				//}
+
 				jobHdlArr[i] = asyncjob.NewJob(getHld(&hdls[i], msg))
 			}
 
 			group := asyncjob.NewGroup(isParallel, jobHdlArr...)
+
 			if err := group.Run(context.Background()); err != nil {
 				log.Println(err)
 			}

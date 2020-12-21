@@ -1,25 +1,23 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"fooddlv/appctx"
 	"fooddlv/auth/authhdl"
-	"fooddlv/common"
 	"fooddlv/consumers"
 	"fooddlv/middleware"
 	"fooddlv/note/notehdl/ginnote"
-	"fooddlv/pubsub"
 	"fooddlv/upload/imghdl"
 	"github.com/gin-gonic/gin"
 	socketio "github.com/googollee/go-socket.io"
 	"github.com/googollee/go-socket.io/engineio"
+	"github.com/googollee/go-socket.io/engineio/transport"
+	"github.com/googollee/go-socket.io/engineio/transport/websocket"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 // Tier layer
@@ -40,18 +38,15 @@ func main() {
 	//consumers.Setup(appCtx)
 	consumers.NewEngine(appCtx).Start()
 
-	go func() {
-		time.Sleep(time.Second * 3)
-		appCtx.GetPubsub().Publish(context.Background(), common.ChanNoteCreated, pubsub.NewMessage(10))
-	}()
+	//go func() {
+	//	time.Sleep(time.Second * 3)
+	//	appCtx.GetPubsub().Publish(context.Background(), common.ChanNoteCreated, pubsub.NewMessage(10))
+	//}()
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))
 
 	r.GET("/ping", func(c *gin.Context) {
-		var a []int
-		log.Println(a[1])
-
 		c.JSON(200, gin.H{"message": "pong"})
 	})
 
@@ -91,31 +86,50 @@ func main() {
 	//cancelFn()
 
 	//log.Println(job.State(), job.GetError())
+	//checkClosure()
 	startSocketIOServer(r)
 	r.Run()
 }
 
 func startSocketIOServer(engine *gin.Engine) {
 	server, _ := socketio.NewServer(&engineio.Options{
-		//Transports: []transport.Transport{websocket.Default},
+		Transports: []transport.Transport{websocket.Default},
 	})
 
 	server.OnConnect("/", func(s socketio.Conn) error {
 		s.SetContext("")
-		fmt.Println("connected:", s.ID())
+		fmt.Println("connected:", s.ID(), " IP:", s.RemoteAddr())
 
 		//go func() {
+		//	i := 0
 		//	for {
-		//		s.Emit("test", "a")
+		//		i++
+		//		s.Emit("test", i)
 		//		time.Sleep(time.Second)
 		//	}
 		//}()
 		return nil
 	})
 
-	server.OnEvent("/", "notice", func(s socketio.Conn, msg string) {
-		fmt.Println("notice:", msg)
-		s.Emit("reply", "have "+msg)
+	server.OnEvent("/", "authenticate", func(s socketio.Conn, token string) {
+		// Validate token
+		// If false: s.Close(), and return
+
+		// If true
+		// => UserId
+		// Fetch db find user by Id
+		// Here: s belongs to who? (user_id)
+		// We need a map[user_id][]socketio.Conn
+		log.Println(s.ID(), token)
+	})
+
+	type A struct {
+		Age int `json:"age"`
+	}
+
+	server.OnEvent("/", "notice", func(s socketio.Conn, msg A) {
+		fmt.Println("notice:", msg.Age)
+		s.Emit("reply", msg)
 	})
 
 	server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
@@ -136,6 +150,7 @@ func startSocketIOServer(engine *gin.Engine) {
 
 	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
 		fmt.Println("closed", reason)
+		// Remove socket from socket engine (from app context)
 	})
 
 	go server.Serve()
@@ -216,3 +231,22 @@ type Requester interface {
 
 // Socket Connection (struct - lib provide)
 // => App Socket Connection (current user, permission)
+
+func checkClosure() {
+	arr := make([]func(), 10)
+
+	for i := 0; i <= 9; i++ {
+		f := func(y int) func() {
+			// y is value of i
+			return func() {
+				log.Println(y) // pointer to y, because closure capture all variable outside as a pointer
+			}
+		}
+
+		arr[i] = f(i + 2)
+	}
+
+	for i := range arr {
+		arr[i]()
+	}
+}
