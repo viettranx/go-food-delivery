@@ -12,6 +12,9 @@ type Note struct {
 	Content         string      `json:"content" gorm:"column:content;"`
 	UserId          int         `json:"user_id" gorm:"column:user_id;"`
 	User            *SimpleUser `json:"user" gorm:"Preload:false;"`
+	// Computed fields
+	HasLiked   bool `json:"has_liked" gorm:"-"`
+	LikedCount int  `json:"liked_count" gorm:"-"`
 }
 
 func (Note) TableName() string {

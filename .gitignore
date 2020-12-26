@@ -6,6 +6,7 @@
 *.so
 *.dylib
 *.pem
+*.tar
 app
 
 consumer/archived
