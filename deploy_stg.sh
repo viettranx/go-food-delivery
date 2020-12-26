@@ -23,6 +23,6 @@ scp -o StrictHostKeyChecking=no ./${APP_NAME}.tar ${DEPLOY_CONNECT}:~
 ssh -o StrictHostKeyChecking=no ${DEPLOY_CONNECT} 'bash -s' < ./deploy/stg.sh
 
 echo "Cleaning..."
-#rm -f ./${APP_NAME}.tar
+rm -f ./${APP_NAME}.tar
 docker rmi $(docker images -qa -f 'dangling=true')
 echo "Done"
