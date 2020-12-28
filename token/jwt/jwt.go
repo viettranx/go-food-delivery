@@ -1,8 +1,8 @@
 package jwt
 
 import (
+	"fooddlv/module/user/usermodel"
 	"fooddlv/token"
-	"fooddlv/user/usermodel"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 )

@@ -3,8 +3,8 @@ package jwtrepo
 import (
 	"context"
 	"fooddlv/common"
+	"fooddlv/module/user/usermodel"
 	"fooddlv/token"
-	"fooddlv/user/usermodel"
 )
 
 type JwtVerifyStorage interface {
