@@ -30,6 +30,7 @@ func SendNotificationAfterCreateNote(appCtx common.AppContext) consumerJob {
 	return consumerJob{
 		Title: "Send notification after create note",
 		Hld: func(ctx context.Context, message *pubsub.Message) error {
+			//appCtx.RealtimeEngine().BroadCastTo([]int{1, 2, 3}, "NoteCreated", "aaa")
 			log.Println("SendNotificationAfterCreateNote ", message.Data())
 			// Find all socket of userId and emit
 

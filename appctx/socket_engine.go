@@ -4,12 +4,6 @@ type AppSocket interface {
 	Emit(event string, msg interface{}) error
 }
 
-type RealtimeEngine interface {
-	GetSocketOf(userId int) []AppSocket
-	EmitToUser(userId int) error
-	BroadCastTo(userIds []int) error
-}
-
 type socketEngine struct {
 	db map[int][]AppSocket
 }

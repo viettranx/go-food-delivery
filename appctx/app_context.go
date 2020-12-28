@@ -1,6 +1,7 @@
 package appctx
 
 import (
+	"fooddlv/common"
 	"fooddlv/pubsub"
 	"fooddlv/pubsub/pblocal"
 	"gorm.io/gorm"
@@ -9,7 +10,7 @@ import (
 type appContext struct {
 	db *gorm.DB
 	ps pubsub.Pubsub
-	rt RealtimeEngine
+	rt common.RealtimeEngine
 }
 
 func NewAppContext(db *gorm.DB) *appContext {
@@ -23,3 +24,5 @@ func (ctx *appContext) GetDBConnection() *gorm.DB {
 func (ctx *appContext) GetPubsub() pubsub.Pubsub {
 	return ctx.ps
 }
+
+func (ctx *appContext) RealtimeEngine() common.RealtimeEngine { return ctx.rt }

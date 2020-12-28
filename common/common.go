@@ -10,6 +10,7 @@ const KeyCurrentUser = "CurrentUser"
 type AppContext interface {
 	GetDBConnection() *gorm.DB
 	GetPubsub() pubsub.Pubsub
+	RealtimeEngine() RealtimeEngine
 }
 
 type Hasher interface {
@@ -25,7 +26,7 @@ type Requester interface {
 
 type SimpleUser struct {
 	SQLModel `json:",inline"`
-	Email    string `json:"email"`
+	Email    string   `json:"email"`
 	Roles    RoleEnum `json:"roles"`
 }
 
@@ -38,4 +39,10 @@ func (u *SimpleUser) GetEmail() string {
 
 func (u *SimpleUser) GetRole() RoleEnum {
 	return u.Roles
+}
+
+type RealtimeEngine interface {
+	EmitToUser(userId int, evt string, data interface{}) error
+	BroadCastTo(userIds []int, evt string, data interface{}) error
+	CheckOnline(userIds []int) map[int]bool
 }

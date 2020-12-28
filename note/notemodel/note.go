@@ -8,10 +8,10 @@ const EntityName = "Note"
 
 type Note struct {
 	common.SQLModel `json:",inline"`
-	Title           string      `json:"title" gorm:"column:title;"`
-	Content         string      `json:"content" gorm:"column:content;"`
-	UserId          int         `json:"user_id" gorm:"column:user_id;"`
-	User            *SimpleUser `json:"user" gorm:"Preload:false;"`
+	Title           string `json:"title" gorm:"column:title;"`
+	Content         string `json:"content" gorm:"column:content;"`
+	UserId          int    `json:"user_id" gorm:"column:user_id;"`
+	//User            *SimpleUser `json:"user" gorm:"preload:false;"`
 	// Computed fields
 	HasLiked   bool `json:"has_liked" gorm:"-"`
 	LikedCount int  `json:"liked_count" gorm:"-"`

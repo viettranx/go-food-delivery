@@ -4,6 +4,7 @@ import (
 	"context"
 	"fooddlv/common"
 	"fooddlv/note/notemodel"
+	"go.opencensus.io/trace"
 )
 
 func (s *storeMysql) List(
@@ -11,6 +12,9 @@ func (s *storeMysql) List(
 	paging *common.Paging,
 	filter *notemodel.ListFilter,
 ) ([]notemodel.Note, error) {
+	_, span1 := trace.StartSpan(ctx, "ListNote.store")
+	defer span1.End()
+
 	var rs []notemodel.Note
 
 	db := s.db.Table(notemodel.Note{}.TableName()).Where("status = 1")

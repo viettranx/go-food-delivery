@@ -13,6 +13,9 @@ import (
 	"github.com/googollee/go-socket.io/engineio"
 	"github.com/googollee/go-socket.io/engineio/transport"
 	"github.com/googollee/go-socket.io/engineio/transport/websocket"
+	jg "go.opencensus.io/exporter/jaeger"
+	"go.opencensus.io/plugin/ochttp"
+	"go.opencensus.io/trace"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -88,6 +91,24 @@ func main() {
 	//log.Println(job.State(), job.GetError())
 	//checkClosure()
 	startSocketIOServer(r)
+
+	//url := fmt.Sprint("")
+
+	je, err := jg.NewExporter(jg.Options{
+		AgentEndpoint: "localhost:6831",
+		Process:       jg.Process{ServiceName: "Food-Delivery"},
+	})
+
+	trace.RegisterExporter(je)
+	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+
+	http.ListenAndServe(
+		"127.0.0.1:5000",
+		&ochttp.Handler{
+			Handler: r,
+		},
+	)
+
 	r.Run()
 }
 
@@ -138,6 +159,13 @@ func startSocketIOServer(engine *gin.Engine) {
 	})
 
 	server.OnEvent("/", "bye", func(s socketio.Conn) string {
+		last := s.Context().(string)
+		s.Emit("bye", last)
+		s.Close()
+		return last
+	})
+
+	server.OnEvent("/", "noteSumit", func(s socketio.Conn) string {
 		last := s.Context().(string)
 		s.Emit("bye", last)
 		s.Close()
