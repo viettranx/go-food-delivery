@@ -3,8 +3,8 @@ package jwthdl
 import (
 	"context"
 	"fooddlv/common"
+	"fooddlv/module/user/usermodel"
 	"fooddlv/token"
-	"fooddlv/user/usermodel"
 )
 
 type JwtRepo interface {

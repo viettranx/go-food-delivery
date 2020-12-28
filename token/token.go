@@ -3,7 +3,7 @@ package token
 import (
 	"errors"
 	"fooddlv/common"
-	"fooddlv/user/usermodel"
+	"fooddlv/module/user/usermodel"
 	"time"
 )
 
