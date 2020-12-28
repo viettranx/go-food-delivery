@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"fooddlv/appctx"
 	"fooddlv/consumers"
+	"fooddlv/food_likes/handl"
 	"fooddlv/middleware"
 	"fooddlv/module/auth/authhdl"
 	"fooddlv/module/note/notehdl/ginnote"
@@ -65,6 +66,10 @@ func main() {
 	auth := v1.Group("/auth")
 	auth.POST("/register", authhdl.Register(appCtx))
 	auth.POST("/login", authhdl.Login(appCtx, secretKey))
+
+	foodLikes := v1.Group("/food", middleware.RequiredAuth(appCtx, secretKey))
+	foodLikes.POST("/:food-id/like", handl.CreateFoodLikes(appCtx))
+	foodLikes.DELETE("/:food-id/dis-like", handl.DeleteFoodLike(appCtx))
 
 	v1.Static("/file", "./public")
 	upload := v1.Group("/upload")
@@ -203,7 +208,7 @@ type Requester interface {
 // API Upload Image
 
 // API List/Get Food:
-// We need a full object food, within restaurant object (simple form):
+// We need a full object food_likes, within restaurant object (simple form):
 // Ex: {"id": 1, "title": "abc", "restaurant": {...}}
 // Done.
 
@@ -211,9 +216,9 @@ type Requester interface {
 // 1. User upload images to upload API
 // 1.1 Backend store image, insert to images db
 // 1.2 Backend return array of image ids to the client
-// 2. User create food with food json include image ids: {"title": "...", "img_ids": [1,2,3]}
+// 2. User create food_likes with food_likes json include image ids: {"title": "...", "img_ids": [1,2,3]}
 // 2.1 Backend fetch image objects by ids
-// 2.2 Insert new food with request body data and image objects from 2.1
+// 2.2 Insert new food_likes with request body data and image objects from 2.1
 // 3. Return inserted id to client.
 // Side effect: Delete image record with ids (async)
 // Done.
